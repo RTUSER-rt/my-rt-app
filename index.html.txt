@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RT 呼吸治療資源庫</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        h1 { color: #1a73e8; font-size: 24px; text-align: center; }
+        .card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; }
+        .info { flex-grow: 1; }
+        .title { font-weight: bold; font-size: 18px; margin-bottom: 5px; }
+        .type { font-size: 12px; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px; }
+        .btn { background: #1a73e8; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-left: 10px; transition: 0.3s; }
+        .btn:active { background: #1557b0; }
+        .offline-tag { color: #28a745; font-size: 12px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>🏥 榮總RT資料庫</h1>
+    <p style="text-align:center; color:#666;">點擊按鈕後，檔案將自動存入手機供離線使用</p>
+
+    <div class="card">
+        <div class="info">
+            <div class="title">臨床指引 PDF</div>
+            <span class="type">PDF 文件</span>
+        </div>
+        https://drive.google.com/uc?id=1nyovZwtta4-wrHOTHvq2VsVA0bcRaNdd開啟/下載</a>
+    </div>
+
+    <div class="card">
+        <div class="info">
+            <div class="title">衛教示範影片</div>
+            <span class="type">MP4 影片</span>
+        </div>
+        <a href="你的直接連結2" class="btn">開啟/播放</a>
+    </div>
+
+    <script>
+        // 核心離線技術：Service Worker 註冊
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'rt-cache-v1';
+                    self.addEventListener('install', e => {
+                        e.waitUntil(caches.open(CACHE_NAME).then(cache => {
+                            return cache.addAll(['/']); // 基礎快取
+                        }));
+                    });
+                    self.addEventListener('fetch', e => {
+                        e.respondWith(
+                            caches.match(e.request).then(res => res || fetch(e.request).then(response => {
+                                return caches.open(CACHE_NAME).then(cache => {
+                                    cache.put(e.request, response.clone()); // 自動存入下載過的檔案
+                                    return response;
+                                });
+                            }))
+                        );
+                    });`;
+                const blob = new Blob([swCode], {type: 'text/javascript'});
+                navigator.serviceWorker.register(URL.createObjectURL(blob));
+            });
+        }
+    </script>
+</body>
+</html>
