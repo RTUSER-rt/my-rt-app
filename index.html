@@ -18,15 +18,17 @@
 </head>
 <body>
 
+   <body>
+
     <h1>🏥 榮總RT資料庫</h1>
     <p style="text-align:center; color:#666;">點擊按鈕後，檔案將自動存入手機供離線使用</p>
 
     <div class="card">
         <div class="info">
             <div class="title">臨床指引 PDF</div>
-            <span class="type">PDF 文件</span>
+            <span class="type">Egan's 13th Edition</span>
         </div>
-      <a href="https://drive.google.com/file/d/1nyovZwtta4-wrHOTHvq2VsVA0bcRANdd/preview" class="btn">開啟/下載</a>
+        <a href="https://drive.google.com/file/d/1nyovZwtta4-wrHOTHvq2VsVA0bcRANdd/view?usp=sharing" class="btn">開啟預覽</a>
     </div>
 
     <div class="card">
@@ -37,26 +39,32 @@
         <a href="你的直接連結2" class="btn">開啟/播放</a>
     </div>
 
+    <div class="card" style="border: 2px dashed #1a73e8; background: #e8f0fe;">
+        <div class="info">
+            <div class="title">📂 開啟手機內的 PDF</div>
+            <p style="font-size: 12px; color: #666; margin: 0;">若已下載過，從這裡選取可免網路秒開</p>
+        </div>
+        <input type="file" id="fileInput" style="display:none" accept="application/pdf">
+        <button onclick="document.getElementById('fileInput').click()" style="background: #34a853; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">選擇檔案</button>
+    </div>
+
     <script>
-        // 核心離線技術：Service Worker 註冊
+        // 1. 處理本地檔案開啟
+        document.getElementById('fileInput').onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                window.location.href = url; // 直接在當前頁面開啟
+            }
+        };
+
+        // 2. 核心離線技術：Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
                     const CACHE_NAME = 'rt-cache-v1';
-                    self.addEventListener('install', e => {
-                        e.waitUntil(caches.open(CACHE_NAME).then(cache => {
-                            return cache.addAll(['/']); // 基礎快取
-                        }));
-                    });
                     self.addEventListener('fetch', e => {
-                        e.respondWith(
-                            caches.match(e.request).then(res => res || fetch(e.request).then(response => {
-                                return caches.open(CACHE_NAME).then(cache => {
-                                    cache.put(e.request, response.clone()); // 自動存入下載過的檔案
-                                    return response;
-                                });
-                            }))
-                        );
+                        e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
                     });`;
                 const blob = new Blob([swCode], {type: 'text/javascript'});
                 navigator.serviceWorker.register(URL.createObjectURL(blob));
@@ -64,4 +72,3 @@
         }
     </script>
 </body>
-</html>
