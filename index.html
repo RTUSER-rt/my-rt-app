@@ -11,13 +11,11 @@
         .info { flex-grow: 1; }
         .title { font-weight: bold; font-size: 18px; margin-bottom: 5px; }
         .type { font-size: 12px; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px; }
-        .btn { background: #1a73e8; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-left: 10px; transition: 0.3s; }
+        .btn { background: #1a73e8; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-left: 10px; transition: 0.3s; display: inline-block; text-align: center; }
         .btn:active { background: #1557b0; }
-        .offline-tag { color: #28a745; font-size: 12px; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
-
 
     <h1>🏥 榮總RT資料庫</h1>
     <p style="text-align:center; color:#666;">點擊按鈕後，檔案將自動存入手機供離線使用</p>
@@ -35,29 +33,29 @@
             <div class="title">上課教學影片</div>
             <span class="type">MP4 影片</span>
         </div>
-        <a href="你的直接連結2" class="btn">開啟/播放</a>
+        <a href="你的影片連結" class="btn" target="_blank">開啟/播放</a>
     </div>
 
     <div class="card" style="border: 2px dashed #1a73e8; background: #e8f0fe;">
         <div class="info">
             <div class="title">📂 開啟手機內的 PDF</div>
-            <p style="font-size: 12px; color: #666; margin: 0;">若已下載過，可從這裡選取</p>
+            <p style="font-size: 12px; color: #666; margin: 0;">若已下載過，從這裡選取可免網路秒開</p>
         </div>
         <input type="file" id="fileInput" style="display:none" accept="application/pdf">
-        <button onclick="document.getElementById('fileInput').click()" style="background: #34a853; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">選擇檔案</button>
+        <button onclick="document.getElementById('fileInput').click()" style="background: #34a853; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: 10px;">選擇檔案</button>
     </div>
 
     <script>
-        // 1. 處理本地檔案開啟
+        // 1. 處理本地檔案開啟：選取後直接跳轉顯示 PDF
         document.getElementById('fileInput').onchange = function(e) {
             const file = e.target.files[0];
             if (file) {
                 const url = URL.createObjectURL(file);
-                window.location.href = url; // 直接在當前頁面開啟
+                window.location.href = url; 
             }
         };
 
-        // 2. 核心離線技術：Service Worker
+        // 2. 核心離線技術：Service Worker 註冊
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
@@ -71,3 +69,4 @@
         }
     </script>
 </body>
+</html>
