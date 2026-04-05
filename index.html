@@ -32,17 +32,17 @@
     <div class="card">
         <div class="info">
             <div class="title">📚 臨床參考書 PDF</div>
-            <span class="type">僅供臨床使用</span>
+            <span class="type">Egan's / 呼吸器原理 / Mosby</span>
         </div>
-        <button onclick="openMenu()" class="btn">選擇書籍</button>
+        <button onclick="openMenu('bookOverlay')" class="btn">選擇書籍</button>
     </div>
 
     <div class="card">
         <div class="info">
             <div class="title">📟 呼吸器說明書</div>
-            <span class="type">PB840 / Hamilton / Servo</span>
+            <span class="type">PB / Hamilton / Servo</span>
         </div>
-        <a href="https://drive.google.com/uc?export=download&id=你的說明書檔案ID" class="btn" style="background: #f4b400;">直接下載</a>
+        <button onclick="openMenu('ventOverlay')" class="btn" style="background: #f4b400;">選擇機器</button>
     </div>
 
     <div class="card">
@@ -67,17 +67,29 @@
             <h3>📖 請選擇參考書</h3>
             <div class="menu-list">
                 <a href="https://drive.google.com/file/d/1nyovZwtta4-wrHOTHvq2VsVA0bcRaNdd/view" target="_blank" class="menu-btn">Egan's Fundamentals (13th)</a>
-              <a href="https://drive.google.com/file/d/1IglYTQ4gGztqLO68sj2i72n7r74o08g0/view" target="_blank" class="menu-btn">呼吸器原理 (8th)</a>
-<a href="https://drive.google.com/file/d/1MWHEF8rx6BzMnA43U2ce0ACm5KE8qO6u/view" target="_blank" class="menu-btn">Mosby (10th)</a>
+                <a href="https://drive.google.com/file/d/1IglYTQ4gGztqLQ68sj2i72n7r74o08g0/view" target="_blank" class="menu-btn">呼吸器原理 (8th)</a>
+                <a href="https://drive.google.com/file/d/1MWHEF8rx6BzMnA43U2ce0ACm5KE8qO6u/view" target="_blank" class="menu-btn">Mosby (10th)</a>
             </div>
-            <button onclick="closeMenu()" class="close-btn">取消</button>
+            <button onclick="closeMenu('bookOverlay')" class="close-btn">取消</button>
+        </div>
+    </div>
+
+    <div id="ventOverlay" class="overlay">
+        <div class="menu">
+            <h3>📟 選擇呼吸器型號</h3>
+            <div class="menu-list">
+                <a href="https://drive.google.com/uc?export=download&id=說明書ID1" target="_blank" class="menu-btn">PB 840 說明書</a>
+                <a href="https://drive.google.com/uc?export=download&id=說明書ID2" target="_blank" class="menu-btn">Hamilton G5 說明書</a>
+                <a href="https://drive.google.com/uc?export=download&id=說明書ID3" target="_blank" class="menu-btn">Servo-i 說明書</a>
+            </div>
+            <button onclick="closeMenu('ventOverlay')" class="close-btn">取消</button>
         </div>
     </div>
 
     <script>
-        // 選單控制
-        function openMenu() { document.getElementById('bookOverlay').style.display = 'flex'; }
-        function closeMenu() { document.getElementById('bookOverlay').style.display = 'none'; }
+        // 改良版選單控制：可以傳入 ID 來決定開啟哪個選單
+        function openMenu(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeMenu(id) { document.getElementById(id).style.display = 'none'; }
 
         // 本地檔案開啟
         document.getElementById('fileInput').onchange = function(e) {
@@ -88,7 +100,7 @@
             }
         };
 
-        // Service Worker
+        // Service Worker (保持離線可用)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
