@@ -14,6 +14,14 @@
         .btn { background: #1a73e8; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-left: 10px; transition: 0.3s; display: inline-block; text-align: center; border: none; cursor: pointer; }
         .btn:active { background: #1557b0; }
 
+        /* 計算器專用樣式 */
+        .calc-container { flex-direction: column; align-items: stretch; border: 1px solid #e1e4e8; }
+        .calc-input-group { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 10px; }
+        .input-box { width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; text-align: center; }
+        .result-panel { display: none; background: #f8f9fa; border-radius: 12px; padding: 15px; margin-top: 15px; border-left: 5px solid #1a73e8; }
+        .result-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
+        .highlight-red { color: #d93025; font-weight: bold; font-size: 18px; }
+
         /* 彈出選單樣式 */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
         .menu { background: white; width: 85%; max-width: 400px; border-radius: 20px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
@@ -45,12 +53,39 @@
         <button onclick="openMenu('ventOverlay')" class="btn" style="background: #f4b400;">選擇機器</button>
     </div>
 
-    <div class="card">
-        <div class="info">
-            <div class="title">🎬 上課教學影片</div>
-            <span class="type">MP4 影片</span>
+    <div class="card calc-container">
+        <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+            <div class="title">📊 PBW & Tidal Volume 計算器</div>
+            <span class="type">ARDS Lung Protective Ventilation</span>
         </div>
-        <a href="你的影片連結" class="btn" target="_blank">開啟/播放</a>
+        
+        <div class="calc-input-group">
+            <div style="font-size: 15px;">
+                <input type="radio" name="gender" value="male" id="m" checked> <label for="m">男</label>
+                <input type="radio" name="gender" value="female" id="f"> <label for="f">女</label>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <input type="number" id="height" placeholder="身高" class="input-box">
+                <span style="font-weight: bold; color: #666;">cm</span>
+            </div>
+        </div>
+
+        <button onclick="calculatePBW()" class="btn" style="margin: 15px 0 0 0; width: 100%; background: #1a73e8;">立即計算參數</button>
+
+        <div id="calcResult" class="result-panel">
+            <div class="result-line">
+                <span>Predicted Body Weight:</span>
+                <span style="font-weight: bold;"><span id="res-pbw">--</span> kg</span>
+            </div>
+            <div class="result-line">
+                <span style="color: #d93025; font-weight: bold;">ARDS Target (6 mL/kg):</span>
+                <span class="highlight-red"><span id="res-vt6">--</span> mL</span>
+            </div>
+            <div class="result-line">
+                <span style="color: #666;">Routine Upper (8 mL/kg):</span>
+                <span style="color: #333; font-weight: bold;"><span id="res-vt8">--</span> mL</span>
+            </div>
+        </div>
     </div>
 
     <div class="card" style="border: 2px dashed #1a73e8; background: #e8f0fe;">
@@ -87,9 +122,33 @@
     </div>
 
     <script>
-        // 改良版選單控制：可以傳入 ID 來決定開啟哪個選單
+        // 選單控制
         function openMenu(id) { document.getElementById(id).style.display = 'flex'; }
         function closeMenu(id) { document.getElementById(id).style.display = 'none'; }
+
+        // PBW 計算邏輯
+        function calculatePBW() {
+            const h = document.getElementById('height').value;
+            const g = document.querySelector('input[name="gender"]:checked').value;
+            const resDiv = document.getElementById('calcResult');
+            
+            if (h && h > 100 && h < 250) {
+                // 公式：男 50 + 0.91*(H-152.4) / 女 45.5 + 0.91*(H-152.4)
+                let pbw = (g === 'male') ? 
+                          (50 + 0.91 * (h - 152.4)) : 
+                          (45.5 + 0.91 * (h - 152.4));
+                
+                document.getElementById('res-pbw').innerText = pbw.toFixed(1);
+                document.getElementById('res-vt6').innerText = Math.round(pbw * 6);
+                document.getElementById('res-vt8').innerText = Math.round(pbw * 8);
+                
+                resDiv.style.display = 'block';
+                // 自動捲動到結果，方便手機查看
+                resDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                alert("請輸入正確的身高 (例如: 175)");
+            }
+        }
 
         // 本地檔案開啟
         document.getElementById('fileInput').onchange = function(e) {
@@ -100,7 +159,7 @@
             }
         };
 
-        // Service Worker (保持離線可用)
+        // Service Worker (離線支援)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
