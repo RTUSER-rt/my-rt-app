@@ -6,40 +6,64 @@
     <title>RT 呼吸治療資源庫</title>
     <style>
         body { font-family: -apple-system, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-        h1 { color: #1a73e8; font-size: 24px; text-align: center; margin-bottom: 5px; }
-        .card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-        .info { width: 100%; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; }
-        .title { font-weight: bold; font-size: 18px; display: flex; align-items: center; }
-        .type { font-size: 12px; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; }
-        
-        .btn { background: #1a73e8; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; text-align: center; width: 100%; }
-        .btn:active { opacity: 0.8; }
+        h1 { color: #1a73e8; font-size: 24px; text-align: center; }
+        .card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; }
+        .info { flex-grow: 1; }
+        .title { font-weight: bold; font-size: 18px; margin-bottom: 5px; display: flex; align-items: center; }
+        .type { font-size: 12px; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px; }
+        .btn { background: #1a73e8; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-left: 10px; transition: 0.3s; display: inline-block; text-align: center; border: none; cursor: pointer; }
+        .btn:active { background: #1557b0; }
 
-        /* ROX 三欄佈局 */
-        .input-row { display: flex; align-items: center; padding: 10px 0; }
+        /* 計算器專用佈局 */
+        .calc-container { flex-direction: column; align-items: stretch; border: 1px solid #e1e4e8; }
+        
+        /* ROX 三欄橫排樣式 */
+        .input-row { display: flex; align-items: center; margin-top: 15px; padding: 5px 0; }
         .input-item { flex: 1; text-align: center; position: relative; }
         .input-item:not(:last-child)::after { content: ""; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: #ddd; }
         .input-item label { display: block; font-size: 12px; color: #666; font-weight: bold; margin-bottom: 5px; }
-        .input-small { width: 90%; border: none; font-size: 18px; font-weight: bold; text-align: center; outline: none; background: transparent; }
+        .input-small { width: 85%; border: none; font-size: 18px; font-weight: bold; text-align: center; outline: none; background: transparent; }
 
         .result-panel { display: none; background: #f8f9fa; border-radius: 12px; padding: 15px; margin-top: 15px; border-left: 5px solid #1a73e8; }
-        
-        /* 底部按鈕群組 */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
-        .menu-btn-item { background: #fff; padding: 15px; border-radius: 12px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px; border: 1px solid #e1e4e8; color: #1a73e8; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .result-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
+
+        /* 彈出選單樣式 */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
+        .menu { background: white; width: 85%; max-width: 400px; border-radius: 20px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .menu h3 { margin-top: 0; color: #333; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .menu-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .menu-btn { background: #f8f9fa; color: #1a73e8; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; text-align: center; border: 1px solid #e1e4e8; transition: 0.2s; }
+        .close-btn { width: 100%; margin-top: 20px; padding: 10px; border: none; background: #eee; border-radius: 10px; color: #666; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <h1>🩺 榮總RT資料庫🩻</h1>
-    <p style="text-align:center; color:#666; margin-bottom: 20px; font-size: 14px;">僅供臨床人員參考</p>
+    <p style="text-align:center; color:#666; font-size: 14px;">僅供臨床人員參考</p>
 
     <div class="card">
         <div class="info">
-            <div class="title">📊 PBW & Tidal Volume</div>
+            <div class="title">📚 臨床參考書 PDF</div>
+            <span class="type">Egan's / 呼吸器原理 / Mosby</span>
         </div>
-        <div style="display: flex; justify-content: space-around; padding: 10px 0;">
-            <div>
+        <button onclick="openMenu('bookOverlay')" class="btn">選擇書籍</button>
+    </div>
+
+    <div class="card">
+        <div class="info">
+            <div class="title">🛸 榮總作業須知</div>
+            <span class="type">工作守則 / 業務指引 / 長假預約</span>
+        </div>
+        <button onclick="openMenu('ventOverlay')" class="btn" style="background: #f4b400;">選擇檔案</button>
+    </div>
+
+    <div class="card calc-container">
+        <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+            <div class="title">📊 PBW & Tidal Volume 計算器</div>
+            <span class="type">ARDS Lung Protective Ventilation</span>
+        </div>
+        <div style="display: flex; justify-content: space-around; padding: 15px 0;">
+            <div style="font-size: 16px;">
                 <input type="radio" name="gender" value="male" id="m" checked> <label for="m">男</label>
                 <input type="radio" name="gender" value="female" id="f"> <label for="f">女</label>
             </div>
@@ -47,15 +71,15 @@
                 <input type="number" id="height" placeholder="身高 cm" style="border:none; width:80px; text-align:center; font-size:18px; outline:none;">
             </div>
         </div>
-        <button onclick="calculatePBW()" class="btn">立即計算</button>
+        <button onclick="calculatePBW()" class="btn" style="margin: 0; width: 100%;">立即計算參數</button>
         <div id="calcResult" class="result-panel">
-            <div style="display:flex; justify-content:space-between;"><span>Predicted Weight:</span><b><span id="res-pbw">--</span> kg</b></div>
-            <div style="display:flex; justify-content:space-between; color:#d93025; margin-top:5px;"><span>Target (6ml/kg):</span><b><span id="res-vt6">--</span> mL</b></div>
+            <div class="result-line"><span>Predicted Weight:</span><b><span id="res-pbw">--</span> kg</b></div>
+            <div class="result-line" style="color:#d93025;"><span>Target (6 mL/kg):</span><b><span id="res-vt6">--</span> mL</b></div>
         </div>
     </div>
 
-    <div class="card" style="border-top: 4px solid #34a853;">
-        <div class="info">
+    <div class="card calc-container" style="border-top: 4px solid #34a853;">
+        <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
             <div class="title">
                 🫁 ROX Index 評估
                 <span onclick="showRoxCriteria()" style="cursor: pointer; color: #34a853; font-size: 18px; margin-left: 8px;">⚠️</span>
@@ -78,40 +102,58 @@
             </div>
         </div>
 
-        <button onclick="calculateROX()" class="btn" style="background: #34a853; margin-top: 10px;">計算結果</button>
+        <button onclick="calculateROX()" class="btn" style="margin-top: 15px; background: #34a853;">計算結果</button>
 
         <div id="roxResult" class="result-panel" style="border-left-color: #34a853;">
-            <div style="text-align:center;">
-                <span style="font-size:14px;">ROX Score:</span><br>
+            <div style="text-align:center; margin-bottom: 10px;">
+                <span style="font-size:14px; color:#666;">ROX Score:</span><br>
                 <span id="res-rox-val" style="font-weight: bold; font-size: 24px;">--</span>
             </div>
-            <div id="rox-advice-box" style="margin-top: 10px; text-align: center; border-radius: 8px; padding: 10px;">
-                <div id="rox-advice-main" style="font-weight: bold;"></div>
+            <div id="rox-advice-box" style="text-align: center; border-radius: 8px; padding: 10px;">
+                <div id="rox-advice-main" style="font-weight: bold; font-size: 16px;"></div>
                 <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">請點擊 ⚠️ 對照時間點標準</div>
             </div>
         </div>
     </div>
 
-    <h3 style="font-size: 16px; color: #555; margin-left: 5px;">📚 臨床資源</h3>
-    <div class="menu-grid">
-        <a href="https://drive.google.com/file/d/1nyovZwtta4-wrHOTHvq2VsVA0bcRaNdd/view" target="_blank" class="menu-btn-item">Egan's PDF</a>
-        <a href="https://drive.google.com/file/d/1IglYTQ4gGztqLO68sj2i72n7r74o08g0/view" target="_blank" class="menu-btn-item">呼吸器原理</a>
-    </div>
-
-    <h3 style="font-size: 16px; color: #555; margin-left: 5px; margin-top: 20px;">📟 行政檔案</h3>
-    <div class="menu-grid">
-        <a href="https://docs.google.com/document/d/1kpI6R51GMvFO6mV1rkq0rGkFDiVwCWVxwWKhknkx2pw/edit" target="_blank" class="menu-btn-item">工作守則</a>
-        <a href="https://vacation.emicro.tech/login" target="_blank" class="menu-btn-item">預約長假</a>
-    </div>
-
-    <div class="card" style="border: 2px dashed #1a73e8; background: #e8f0fe; margin-top: 20px;">
+    <div class="card" style="border: 2px dashed #1a73e8; background: #e8f0fe; flex-direction: row;">
+        <div class="info" style="border:none; padding:0; margin:0;">
+            <div class="title" style="font-size: 16px;">📂 開啟手機內的 PDF</div>
+        </div>
         <input type="file" id="fileInput" style="display:none" accept="application/pdf">
-        <button onclick="document.getElementById('fileInput').click()" style="background:none; border:none; color:#1a73e8; font-weight:bold; cursor:pointer; padding: 5px;">📂 開啟手機 PDF 檔案</button>
+        <button onclick="document.getElementById('fileInput').click()" class="btn" style="background: #34a853; width: auto; font-size: 14px;">選擇檔案</button>
+    </div>
+
+    <div id="bookOverlay" class="overlay" onclick="closeMenu('bookOverlay')">
+        <div class="menu" onclick="event.stopPropagation()">
+            <h3>📖 請選擇參考書</h3>
+            <div class="menu-list">
+                <a href="https://drive.google.com/file/d/1nyovZwtta4-wrHOTHvq2VsVA0bcRaNdd/view" target="_blank" class="menu-btn">Egan's Fundamentals (13th)</a>
+                <a href="https://drive.google.com/file/d/1IglYTQ4gGztqLO68sj2i72n7r74o08g0/view" target="_blank" class="menu-btn">呼吸器原理 (8th)</a>
+                <a href="https://drive.google.com/file/d/1MWHEF8rx6BzMnA43U2ce0ACm5KE8qO6u/view" target="_blank" class="menu-btn">Mosby (10th)</a>
+            </div>
+            <button onclick="closeMenu('bookOverlay')" class="close-btn">關閉</button>
+        </div>
+    </div>
+
+    <div id="ventOverlay" class="overlay" onclick="closeMenu('ventOverlay')">
+        <div class="menu" onclick="event.stopPropagation()">
+            <h3>📟 選擇檔案</h3>
+            <div class="menu-list">
+                <a href="https://docs.google.com/document/d/1kpI6R51GMvFO6mV1rkq0rGkFDiVwCWVxwWKhknkx2pw/edit" target="_blank" class="menu-btn">工作守則</a>
+                <a href="https://vacation.emicro.tech/login" target="_blank" class="menu-btn">預約長假</a>
+                <a href="https://drive.google.com/file/d/1324a9lditk6WQxbkuhsJFn0aXxSHN-8V/view" target="_blank" class="menu-btn">PGY 指引</a>
+            </div>
+            <button onclick="closeMenu('ventOverlay')" class="close-btn">關閉</button>
+        </div>
     </div>
 
     <script>
+        function openMenu(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeMenu(id) { document.getElementById(id).style.display = 'none'; }
+        
         function showRoxCriteria() {
-            alert("【ROX Index 判讀標準】\n\n各時間點「預測失敗」切點：\n● 2 hr  : < 2.85\n● 6 hr  : < 3.47\n● 12 hr : < 3.85\n● >12 hr: < 4.88 (穩定線)");
+            alert("【ROX Index 判讀標準】\n\n各時間點「預測失敗」切點：\n● 2 hr  : < 2.85\n● 6 hr  : < 3.47\n● 12 hr : < 3.85\n● >12 hr: < 4.88 (穩定安全線)");
         }
 
         function calculatePBW() {
@@ -126,27 +168,29 @@
         }
 
         function calculateROX() {
-            const s = document.getElementById('rox_spo2').value;
-            const f = document.getElementById('rox_fio2').value / 100;
-            const r = document.getElementById('rox_rr').value;
+            const s = parseFloat(document.getElementById('rox_spo2').value);
+            let f = parseFloat(document.getElementById('rox_fio2').value);
+            const r = parseFloat(document.getElementById('rox_rr').value);
+            
             const resVal = document.getElementById('res-rox-val');
             const resBox = document.getElementById('rox-advice-box');
             const resMain = document.getElementById('rox-advice-main');
 
             if (s && f && r > 0) {
+                if (f > 1) f = f / 100; // 自動修正 FiO2
                 const rox = (s / f / r).toFixed(2);
                 resVal.innerText = rox;
                 document.getElementById('roxResult').style.display = 'block';
 
                 if (rox >= 4.88) {
                     resBox.style.background = "#e6f4ea"; resBox.style.color = "#1e8e3e";
-                    resMain.innerText = "✅ 低風險";
+                    resMain.innerText = "✅ 低風險：維持治療";
                 } else if (rox >= 3.85) {
                     resBox.style.background = "#fef7e0"; resBox.style.color = "#f9ab00";
-                    resMain.innerText = "⚠️ 中風險";
+                    resMain.innerText = "⚠️ 中風險：密切觀察";
                 } else {
                     resBox.style.background = "#fce8e6"; resBox.style.color = "#d93025";
-                    resMain.innerText = "🚨 高風險";
+                    resMain.innerText = "🚨 高風險：評估插管";
                 }
             } else { alert("請輸入完整數值"); }
         }
