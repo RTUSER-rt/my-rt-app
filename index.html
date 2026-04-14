@@ -17,7 +17,7 @@
         /* 計算器專用佈局 */
         .calc-container { flex-direction: column; align-items: stretch; border: 1px solid #e1e4e8; }
         
-        /* ROX 三欄橫排樣式 */
+        /* 橫排樣式 (用於 PBW 與 ROX) */
         .input-row { display: flex; align-items: center; margin-top: 15px; padding: 5px 0; }
         .input-item { flex: 1; text-align: center; position: relative; }
         .input-item:not(:last-child)::after { content: ""; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: #ddd; }
@@ -27,7 +27,6 @@
         .result-panel { display: none; background: #f8f9fa; border-radius: 12px; padding: 15px; margin-top: 15px; border-left: 5px solid #1a73e8; }
         .result-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
 
-        /* 彈出選單樣式 */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
         .menu { background: white; width: 85%; max-width: 400px; border-radius: 20px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .menu h3 { margin-top: 0; color: #333; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 15px; }
@@ -68,13 +67,14 @@
                 <input type="radio" name="gender" value="female" id="f"> <label for="f">女</label>
             </div>
             <div style="border-bottom: 2px solid #1a73e8;">
-                <input type="number" id="height" placeholder="身高 cm" style="border:none; width:80px; text-align:center; font-size:18px; outline:none;">
+                <input type="number" id="height" placeholder="身高 cm" style="border:none; width:80px; text-align:center; font-size:18px; outline:none;" oninput="if(value.length>2)calculatePBW()">
             </div>
         </div>
         <button onclick="calculatePBW()" class="btn" style="margin: 0; width: 100%;">立即計算參數</button>
         <div id="calcResult" class="result-panel">
             <div class="result-line"><span>Predicted Weight:</span><b><span id="res-pbw">--</span> kg</b></div>
             <div class="result-line" style="color:#d93025;"><span>Target (6 mL/kg):</span><b><span id="res-vt6">--</span> mL</b></div>
+            <div class="result-line" style="color:#666;"><span>Routine (8 mL/kg):</span><b><span id="res-vt8">--</span> mL</b></div>
         </div>
     </div>
 
@@ -90,15 +90,15 @@
         <div class="input-row">
             <div class="input-item">
                 <label>SpO2</label>
-                <input type="number" id="rox_spo2" placeholder="🩼" class="input-small">
+                <input type="number" id="rox_spo2" placeholder="🩼" class="input-small" oninput="if(value.length>=2)document.getElementById('rox_fio2').focus()">
             </div>
             <div class="input-item">
                 <label>FiO2</label>
-                <input type="number" id="rox_fio2" placeholder="💉" class="input-small">
+                <input type="number" id="rox_fio2" placeholder="💉" class="input-small" oninput="if(value.length>=2)document.getElementById('rox_rr').focus()">
             </div>
             <div class="input-item">
                 <label>RR</label>
-                <input type="number" id="rox_rr" placeholder="💊" class="input-small">
+                <input type="number" id="rox_rr" placeholder="💊" class="input-small" oninput="if(value.length>=2)calculateROX()">
             </div>
         </div>
 
@@ -111,7 +111,7 @@
             </div>
             <div id="rox-advice-box" style="text-align: center; border-radius: 8px; padding: 10px;">
                 <div id="rox-advice-main" style="font-weight: bold; font-size: 16px;"></div>
-                <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">請點擊 ⚠️ 對照時間點標準</div>
+                <div style="font-size: 12px; margin-top: 5px; opacity: 0.8; color: #444;">請點擊 ⚠️ 對照時間點標準</div>
             </div>
         </div>
     </div>
@@ -154,9 +154,10 @@
         function closeMenu(id) { document.getElementById(id).style.display = 'none'; }
         
         function showRoxCriteria() {
-            alert("【ROX Index 判讀標準】\n\n各時間點「預測失敗」切點：\n● 2 hr  : < 2.85\n● 6 hr  : < 3.47\n● 12 hr : < 3.85\n● >12 hr: < 4.88 (穩定安全線)");
+            alert("【ROX Index 判讀標準】\n\n依據臨床指引，各時間點「預測失敗」切點：\n● 2 hr  : < 2.85\n● 6 hr  : < 3.47\n● 12 hr : < 3.85\n● >12 hr: < 4.88 (穩定安全線)\n\n※ 數值越低風險越高。");
         }
 
+        // 修改 PBW 計算邏輯，加入 8 mL/kg
         function calculatePBW() {
             const h = document.getElementById('height').value;
             const g = document.querySelector('input[name="gender"]:checked').value;
@@ -164,6 +165,7 @@
                 let pbw = (g === 'male') ? (50 + 0.91 * (h - 152.4)) : (45.5 + 0.91 * (h - 152.4));
                 document.getElementById('res-pbw').innerText = pbw.toFixed(1);
                 document.getElementById('res-vt6').innerText = Math.round(pbw * 6);
+                document.getElementById('res-vt8').innerText = Math.round(pbw * 8); // 補回這行
                 document.getElementById('calcResult').style.display = 'block';
             }
         }
@@ -178,23 +180,27 @@
             const resMain = document.getElementById('rox-advice-main');
 
             if (s && f && r > 0) {
-                if (f > 1) f = f / 100; // 自動修正 FiO2
+                if (f > 1) f = f / 100;
                 const rox = (s / f / r).toFixed(2);
                 resVal.innerText = rox;
                 document.getElementById('roxResult').style.display = 'block';
 
                 if (rox >= 4.88) {
                     resBox.style.background = "#e6f4ea"; resBox.style.color = "#1e8e3e";
-                    resMain.innerText = "✅ 低風險：維持治療";
+                    resMain.innerText = "✅ 低風險：維持目前治療";
                 } else if (rox >= 3.85) {
                     resBox.style.background = "#fef7e0"; resBox.style.color = "#f9ab00";
-                    resMain.innerText = "⚠️ 中風險：密切觀察";
+                    resMain.innerText = "⚠️ 中風險：需密切觀察";
                 } else {
                     resBox.style.background = "#fce8e6"; resBox.style.color = "#d93025";
-                    resMain.innerText = "🚨 高風險：評估插管";
+                    resMain.innerText = "🚨 高風險：建議評估插管";
                 }
-            } else { alert("請輸入完整數值"); }
+            }
         }
+
+        document.getElementById('fileInput').onchange = function(e) {
+            if (e.target.files[0]) window.location.href = URL.createObjectURL(e.target.files[0]);
+        };
     </script>
 </body>
 </html>
