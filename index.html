@@ -88,6 +88,39 @@
         </div>
     </div>
 
+    <div class="card calc-container" style="border-top: 4px solid #34a853;">
+        <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+            <div class="title">🫁 ROX Index (HFNC 評估)</div>
+            <span class="type">Score = (SpO2/FiO2) / RR</span>
+        </div>
+        
+        <div class="calc-input-group" style="flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 75px;">
+                <label style="font-size: 12px; color: #666; display: block; text-align: center;">SpO2 (%)</label>
+                <input type="number" id="rox_spo2" placeholder="95" class="input-box" style="width: 100%;">
+            </div>
+            <div style="flex: 1; min-width: 75px;">
+                <label style="font-size: 12px; color: #666; display: block; text-align: center;">FiO2 (%)</label>
+                <input type="number" id="rox_fio2" placeholder="40" class="input-box" style="width: 100%;">
+            </div>
+            <div style="flex: 1; min-width: 75px;">
+                <label style="font-size: 12px; color: #666; display: block; text-align: center;">RR</label>
+                <input type="number" id="rox_rr" placeholder="20" class="input-box" style="width: 100%;">
+            </div>
+        </div>
+
+        <button onclick="calculateROX()" class="btn" style="margin: 15px 0 0 0; width: 100%; background: #34a853;">計算 ROX 指數</button>
+
+        <div id="roxResult" class="result-panel" style="border-left-color: #34a853;">
+            <div class="result-line">
+                <span>ROX Index Score:</span>
+                <span id="res-rox-val" style="font-weight: bold; font-size: 20px;">--</span>
+            </div>
+            <div id="rox-advice" style="margin-top: 10px; font-size: 14px; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold;">
+                </div>
+        </div>
+    </div>
+
     <div class="card" style="border: 2px dashed #1a73e8; background: #e8f0fe;">
         <div class="info">
             <div class="title">📂 開啟手機內的 PDF</div>
@@ -117,14 +150,12 @@
                 <a href="https://docs.google.com/document/d/1J3NbT6AoW_99JvtHbgdSZPOhi5E68w51Y_WUYatTx_I/edit?usp=drive_link" target="_blank" class="menu-btn">業務指引</a>
                 <a href="https://vacation.emicro.tech/login" target="_blank" class="menu-btn">預約長假</a>
                 <a href="https://drive.google.com/file/d/1324a9lditk6WQxbkuhsJFn0aXxSHN-8V/view?usp=drive_link" target="_blank" class="menu-btn">PGY</a>
-                <a href="https://drive.google.com/uc?export=download&id=說明書ID3" target="_blank" class="menu-btn">待放</a>
             </div>
             <button onclick="closeMenu('ventOverlay')" class="close-btn">取消</button>
         </div>
     </div>
 
     <script>
-        // 選單控制
         function openMenu(id) { document.getElementById(id).style.display = 'flex'; }
         function closeMenu(id) { document.getElementById(id).style.display = 'none'; }
 
@@ -135,20 +166,47 @@
             const resDiv = document.getElementById('calcResult');
             
             if (h && h > 100 && h < 250) {
-                // 公式：男 50 + 0.91*(H-152.4) / 女 45.5 + 0.91*(H-152.4)
-                let pbw = (g === 'male') ? 
-                          (50 + 0.91 * (h - 152.4)) : 
-                          (45.5 + 0.91 * (h - 152.4));
-                
+                let pbw = (g === 'male') ? (50 + 0.91 * (h - 152.4)) : (45.5 + 0.91 * (h - 152.4));
                 document.getElementById('res-pbw').innerText = pbw.toFixed(1);
                 document.getElementById('res-vt6').innerText = Math.round(pbw * 6);
                 document.getElementById('res-vt8').innerText = Math.round(pbw * 8);
-                
                 resDiv.style.display = 'block';
-                // 自動捲動到結果，方便手機查看
                 resDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } else {
                 alert("請輸入正確的身高 (例如: 175)");
+            }
+        }
+
+        // ROX Index 計算邏輯
+        function calculateROX() {
+            const spo2 = document.getElementById('rox_spo2').value;
+            const fio2 = document.getElementById('rox_fio2').value / 100;
+            const rr = document.getElementById('rox_rr').value;
+            const resDiv = document.getElementById('roxResult');
+            const valSpan = document.getElementById('res-rox-val');
+            const adviceDiv = document.getElementById('rox-advice');
+
+            if (spo2 && fio2 && rr && rr > 0) {
+                const rox = (spo2 / fio2 / rr).toFixed(2);
+                valSpan.innerText = rox;
+                resDiv.style.display = 'block';
+
+                if (rox >= 4.88) {
+                    adviceDiv.style.background = "#e6f4ea";
+                    adviceDiv.style.color = "#1e8e3e";
+                    adviceDiv.innerText = "✅ 低風險：建議維持目前治療";
+                } else if (rox >= 3.85) {
+                    adviceDiv.style.background = "#fef7e0";
+                    adviceDiv.style.color = "#f9ab00";
+                    adviceDiv.innerText = "⚠️ 中風險：需密切觀察並重新評估";
+                } else {
+                    adviceDiv.style.background = "#fce8e6";
+                    adviceDiv.style.color = "#d93025";
+                    adviceDiv.innerText = "🚨 高風險：失敗風險高，考慮插管";
+                }
+                resDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                alert("請完整輸入 SpO2, FiO2 和呼吸速率");
             }
         }
 
@@ -161,7 +219,7 @@
             }
         };
 
-        // Service Worker (離線支援)
+        // Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
