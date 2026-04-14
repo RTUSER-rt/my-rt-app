@@ -9,20 +9,22 @@
         h1 { color: #1a73e8; font-size: 24px; text-align: center; }
         .card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; }
         .info { flex-grow: 1; }
-        .title { font-weight: bold; font-size: 18px; margin-bottom: 5px; }
+        .title { font-weight: bold; font-size: 18px; margin-bottom: 5px; display: flex; align-items: center; }
         .type { font-size: 12px; color: #666; background: #eee; padding: 2px 8px; border-radius: 10px; }
         .btn { background: #1a73e8; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-left: 10px; transition: 0.3s; display: inline-block; text-align: center; border: none; cursor: pointer; }
         .btn:active { background: #1557b0; }
 
-        /* 計算器專用樣式 */
+        /* 計算器通用樣式 */
         .calc-container { flex-direction: column; align-items: stretch; border: 1px solid #e1e4e8; }
         .calc-input-group { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 10px; }
-        .input-box { width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; text-align: center; }
+        .input-box { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        
+        /* 結果面板 */
         .result-panel { display: none; background: #f8f9fa; border-radius: 12px; padding: 15px; margin-top: 15px; border-left: 5px solid #1a73e8; }
         .result-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
         .highlight-red { color: #d93025; font-weight: bold; font-size: 18px; }
 
-        /* 彈出選單樣式 */
+        /* 彈出選單與 Modal 樣式 */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
         .menu { background: white; width: 85%; max-width: 400px; border-radius: 20px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .menu h3 { margin-top: 0; color: #333; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 15px; }
@@ -30,6 +32,10 @@
         .menu-btn { background: #f8f9fa; color: #1a73e8; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: bold; text-align: center; border: 1px solid #e1e4e8; transition: 0.2s; }
         .menu-btn:active { background: #e8f0fe; }
         .close-btn { width: 100%; margin-top: 20px; padding: 10px; border: none; background: #eee; border-radius: 10px; color: #666; font-weight: bold; }
+
+        /* 圖片 Modal 專用 */
+        #imageModal { background: rgba(0,0,0,0.9); cursor: pointer; }
+        #modalImg { max-width: 95%; max-height: 90%; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -48,7 +54,7 @@
     <div class="card">
         <div class="info">
             <div class="title">🛸 榮總作業須知</div>
-            <span class="type">工作守則 / 業務指引/長假預約</span>
+            <span class="type">工作守則 / 業務指引 / 長假預約</span>
         </div>
         <button onclick="openMenu('ventOverlay')" class="btn" style="background: #f4b400;">選擇檔案</button>
     </div>
@@ -59,65 +65,55 @@
             <span class="type">ARDS Lung Protective Ventilation</span>
         </div>
         
-        <div class="calc-input-group">
-            <div style="font-size: 15px;">
+        <div class="calc-input-group" style="padding: 10px 0;">
+            <div style="font-size: 16px;">
                 <input type="radio" name="gender" value="male" id="m" checked> <label for="m">男</label>
                 <input type="radio" name="gender" value="female" id="f"> <label for="f">女</label>
             </div>
-            <div style="display: flex; align-items: center; gap: 5px;">
-                <input type="number" id="height" placeholder="身高" class="input-box">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="number" id="height" placeholder="身高" class="input-box" style="width: 80px; text-align: center;">
                 <span style="font-weight: bold; color: #666;">cm</span>
             </div>
         </div>
 
-        <button onclick="calculatePBW()" class="btn" style="margin: 15px 0 0 0; width: 100%; background: #1a73e8;">立即計算參數</button>
+        <button onclick="calculatePBW()" class="btn" style="margin: 5px 0 0 0; width: 100%; background: #1a73e8; height: 45px;">立即計算參數</button>
 
         <div id="calcResult" class="result-panel">
-            <div class="result-line">
-                <span>Predicted Body Weight:</span>
-                <span style="font-weight: bold;"><span id="res-pbw">--</span> kg</span>
-            </div>
-            <div class="result-line">
-                <span style="color: #d93025; font-weight: bold;">ARDS Target (6 mL/kg):</span>
-                <span class="highlight-red"><span id="res-vt6">--</span> mL</span>
-            </div>
-            <div class="result-line">
-                <span style="color: #666;">Routine Upper (8 mL/kg):</span>
-                <span style="color: #333; font-weight: bold;"><span id="res-vt8">--</span> mL</span>
-            </div>
+            <div class="result-line"><span>Predicted Body Weight:</span><span style="font-weight: bold;"><span id="res-pbw">--</span> kg</span></div>
+            <div class="result-line"><span style="color: #d93025; font-weight: bold;">ARDS Target (6 mL/kg):</span><span class="highlight-red"><span id="res-vt6">--</span> mL</span></div>
+            <div class="result-line"><span style="color: #666;">Routine Upper (8 mL/kg):</span><span style="color: #333; font-weight: bold;"><span id="res-vt8">--</span> mL</span></div>
         </div>
     </div>
 
     <div class="card calc-container" style="border-top: 4px solid #34a853;">
         <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-            <div class="title">🫁 ROX Index (HFNC 評估)</div>
+            <div class="title">
+                🫁 ROX Index (HFNC 評估)
+                <span onclick="openImageModal()" style="cursor: pointer; color: #34a853; font-size: 20px; margin-left: 8px;">⚠️</span>
+            </div>
             <span class="type">Score = (SpO2/FiO2) / RR</span>
         </div>
         
-        <div class="calc-input-group" style="flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 75px;">
-                <label style="font-size: 12px; color: #666; display: block; text-align: center;">SpO2 (%)</label>
-                <input type="number" id="rox_spo2" placeholder="95" class="input-box" style="width: 100%;">
+        <div style="margin-top: 15px;">
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px;">SpO2 (%)</label>
+                <input type="number" id="rox_spo2" placeholder="例如: 95" class="input-box">
             </div>
-            <div style="flex: 1; min-width: 75px;">
-                <label style="font-size: 12px; color: #666; display: block; text-align: center;">FiO2 (%)</label>
-                <input type="number" id="rox_fio2" placeholder="40" class="input-box" style="width: 100%;">
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px;">FiO2 (%)</label>
+                <input type="number" id="rox_fio2" placeholder="例如: 40" class="input-box">
             </div>
-            <div style="flex: 1; min-width: 75px;">
-                <label style="font-size: 12px; color: #666; display: block; text-align: center;">RR</label>
-                <input type="number" id="rox_rr" placeholder="20" class="input-box" style="width: 100%;">
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px;">Respiratory Rate (RR)</label>
+                <input type="number" id="rox_rr" placeholder="例如: 22" class="input-box">
             </div>
         </div>
 
-        <button onclick="calculateROX()" class="btn" style="margin: 15px 0 0 0; width: 100%; background: #34a853;">計算 ROX 指數</button>
+        <button onclick="calculateROX()" class="btn" style="margin: 5px 0 0 0; width: 100%; background: #34a853; height: 50px; font-size: 18px;">計算 ROX 指數</button>
 
         <div id="roxResult" class="result-panel" style="border-left-color: #34a853;">
-            <div class="result-line">
-                <span>ROX Index Score:</span>
-                <span id="res-rox-val" style="font-weight: bold; font-size: 20px;">--</span>
-            </div>
-            <div id="rox-advice" style="margin-top: 10px; font-size: 14px; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold;">
-                </div>
+            <div class="result-line"><span>ROX Index Score:</span><span id="res-rox-val" style="font-weight: bold; font-size: 22px;">--</span></div>
+            <div id="rox-advice" style="margin-top: 10px; font-size: 15px; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold;"></div>
         </div>
     </div>
 
@@ -155,16 +151,22 @@
         </div>
     </div>
 
+    <div id="imageModal" class="overlay" onclick="closeImageModal()">
+        <img id="modalImg" src="image_6fb6d2.png" alt="ROX Index Standard Chart">
+    </div>
+
     <script>
+        // 選單與 Modal 控制
         function openMenu(id) { document.getElementById(id).style.display = 'flex'; }
         function closeMenu(id) { document.getElementById(id).style.display = 'none'; }
+        function openImageModal() { document.getElementById('imageModal').style.display = 'flex'; }
+        function closeImageModal() { document.getElementById('imageModal').style.display = 'none'; }
 
-        // PBW 計算邏輯
+        // PBW 計算
         function calculatePBW() {
             const h = document.getElementById('height').value;
             const g = document.querySelector('input[name="gender"]:checked').value;
             const resDiv = document.getElementById('calcResult');
-            
             if (h && h > 100 && h < 250) {
                 let pbw = (g === 'male') ? (50 + 0.91 * (h - 152.4)) : (45.5 + 0.91 * (h - 152.4));
                 document.getElementById('res-pbw').innerText = pbw.toFixed(1);
@@ -172,12 +174,10 @@
                 document.getElementById('res-vt8').innerText = Math.round(pbw * 8);
                 resDiv.style.display = 'block';
                 resDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } else {
-                alert("請輸入正確的身高 (例如: 175)");
-            }
+            } else { alert("請輸入正確的身高 (cm)"); }
         }
 
-        // ROX Index 計算邏輯
+        // ROX 計算
         function calculateROX() {
             const spo2 = document.getElementById('rox_spo2').value;
             const fio2 = document.getElementById('rox_fio2').value / 100;
@@ -192,41 +192,29 @@
                 resDiv.style.display = 'block';
 
                 if (rox >= 4.88) {
-                    adviceDiv.style.background = "#e6f4ea";
-                    adviceDiv.style.color = "#1e8e3e";
-                    adviceDiv.innerText = "✅ 低風險：建議維持目前治療";
+                    adviceDiv.style.background = "#e6f4ea"; adviceDiv.style.color = "#1e8e3e";
+                    adviceDiv.innerText = "✅ 低風險：建議維持目前治療 (請對照⚠️圖表)";
                 } else if (rox >= 3.85) {
-                    adviceDiv.style.background = "#fef7e0";
-                    adviceDiv.style.color = "#f9ab00";
-                    adviceDiv.innerText = "⚠️ 中風險：需密切觀察並重新評估";
+                    adviceDiv.style.background = "#fef7e0"; adviceDiv.style.color = "#f9ab00";
+                    adviceDiv.innerText = "⚠️ 中風險：需密切觀察 (請對照⚠️圖表)";
                 } else {
-                    adviceDiv.style.background = "#fce8e6";
-                    adviceDiv.style.color = "#d93025";
-                    adviceDiv.innerText = "🚨 高風險：失敗風險高，考慮插管";
+                    adviceDiv.style.background = "#fce8e6"; adviceDiv.style.color = "#d93025";
+                    adviceDiv.innerText = "🚨 高風險：失敗風險高，考慮插管 (請對照⚠️圖表)";
                 }
                 resDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } else {
-                alert("請完整輸入 SpO2, FiO2 和呼吸速率");
-            }
+            } else { alert("請完整輸入 SpO2, FiO2 和呼吸速率"); }
         }
 
-        // 本地檔案開啟
+        // 開啟本地檔案
         document.getElementById('fileInput').onchange = function(e) {
             const file = e.target.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                window.location.href = url; 
-            }
+            if (file) { window.location.href = URL.createObjectURL(file); }
         };
 
         // Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'rt-cache-v1';
-                    self.addEventListener('fetch', e => {
-                        e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
-                    });`;
+                const swCode = `self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(res => res || fetch(e.request))); });`;
                 const blob = new Blob([swCode], {type: 'text/javascript'});
                 navigator.serviceWorker.register(URL.createObjectURL(blob));
             });
