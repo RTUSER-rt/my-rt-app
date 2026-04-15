@@ -17,7 +17,7 @@
         /* 計算器專用佈局 */
         .calc-container { flex-direction: column; align-items: stretch; border: 1px solid #e1e4e8; }
         
-        /* 橫排樣式 (用於 PBW 與 ROX) */
+        /* 橫排樣式 */
         .input-row { display: flex; align-items: center; margin-top: 15px; padding: 5px 0; }
         .input-item { flex: 1; text-align: center; position: relative; }
         .input-item:not(:last-child)::after { content: ""; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: #ddd; }
@@ -77,7 +77,8 @@
             <div class="result-line" style="color:#666;"><span>Routine (8 mL/kg):</span><b><span id="res-vt8">--</span> mL</b></div>
         </div>
     </div>
-<div class="card calc-container" style="border-top: 4px solid #f4b400;">
+
+    <div class="card calc-container" style="border-top: 4px solid #f4b400;">
         <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
             <div class="title">
                 🫁 Coach 目標預測 (IS)
@@ -86,14 +87,14 @@
             <span class="type">Predicted VC & Goal Setting</span>
         </div>
         
-        <div class="input-row">
-            <div class="input-item">
-                <label>性別</label>
-                <select id="is_gender" class="input-small" style="width: 100%; border:none; -webkit-appearance:none; background:transparent;">
-                    <option value="male">男</option>
-                    <option value="female">女</option>
-                </select>
+        <div style="display: flex; justify-content: space-around; padding: 15px 0;">
+            <div style="font-size: 16px;">
+                <input type="radio" name="is_gender" value="male" id="is_m" checked> <label for="is_m">男</label>
+                <input type="radio" name="is_gender" value="female" id="is_f"> <label for="is_f">女</label>
             </div>
+        </div>
+
+        <div class="input-row">
             <div class="input-item">
                 <label>年齡</label>
                 <input type="number" id="is_age" placeholder="y" class="input-small">
@@ -120,6 +121,7 @@
             </div>
         </div>
     </div>
+
     <div class="card calc-container" style="border-top: 4px solid #34a853;">
         <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
             <div class="title">
@@ -199,7 +201,6 @@
             alert("【ROX Index 判讀標準】\n\n依據臨床指引，各時間點「預測失敗」切點：\n● 2 hr  : < 2.85\n● 6 hr  : < 3.47\n● 12 hr : < 3.85\n● >12 hr: < 4.88 (穩定安全線👌)\n\n※ 數值越低風險越高。");
         }
 
-        // 修改 PBW 計算邏輯，加入 8 mL/kg
         function calculatePBW() {
             const h = document.getElementById('height').value;
             const g = document.querySelector('input[name="gender"]:checked').value;
@@ -207,16 +208,18 @@
                 let pbw = (g === 'male') ? (50 + 0.91 * (h - 152.4)) : (45.5 + 0.91 * (h - 152.4));
                 document.getElementById('res-pbw').innerText = pbw.toFixed(1);
                 document.getElementById('res-vt6').innerText = Math.round(pbw * 6);
-                document.getElementById('res-vt8').innerText = Math.round(pbw * 8); // 補回這行
+                document.getElementById('res-vt8').innerText = Math.round(pbw * 8);
                 document.getElementById('calcResult').style.display = 'block';
             }
         }
-function showISInfo() {
+
+        function showISInfo() {
             alert("【Coach (IS) 目標設定說明】\n\n1. 公式：採用 Knudson Predicted VC 標準。\n2. 目標：通常以預計肺活量的 50% 到 75% 作為練習目標。\n3. 臨床意義：若病人無法達成起始目標，需評估是否有術後疼痛、肺塌陷或痰液堆積。");
         }
 
         function calculateIS() {
-            const gender = document.getElementById('is_gender').value;
+            // 改為抓取 radio 選中的性別值
+            const gender = document.querySelector('input[name="is_gender"]:checked').value;
             const age = parseFloat(document.getElementById('is_age').value);
             const height = parseFloat(document.getElementById('is_height').value);
             const resDiv = document.getElementById('isResult');
@@ -240,6 +243,7 @@ function showISInfo() {
                 alert("請完整輸入年齡與身高");
             }
         }
+
         function calculateROX() {
             const s = parseFloat(document.getElementById('rox_spo2').value);
             let f = parseFloat(document.getElementById('rox_fio2').value);
