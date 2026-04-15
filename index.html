@@ -87,19 +87,19 @@
             <span class="type">Predicted VC & Goal Setting</span>
         </div>
         
-        <div style="display: flex; justify-content: space-around; padding: 15px 0;">
-            <div style="font-size: 16px;">
+        <div class="input-row" style="display: flex; align-items: center; padding: 10px 0;">
+            <div style="flex: 1.2; font-size: 15px; position: relative; text-align: center;">
                 <input type="radio" name="is_gender" value="male" id="is_m" checked> <label for="is_m">男</label>
                 <input type="radio" name="is_gender" value="female" id="is_f"> <label for="is_f">女</label>
+                <div style="position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: #ddd;"></div>
             </div>
-        </div>
-
-        <div class="input-row">
-            <div class="input-item">
+            
+            <div class="input-item" style="flex: 1;">
                 <label>年齡</label>
                 <input type="number" id="is_age" placeholder="y" class="input-small">
             </div>
-            <div class="input-item">
+            
+            <div class="input-item" style="flex: 1;">
                 <label>身高</label>
                 <input type="number" id="is_height" placeholder="cm" class="input-small">
             </div>
