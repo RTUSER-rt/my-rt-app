@@ -211,7 +211,35 @@
                 document.getElementById('calcResult').style.display = 'block';
             }
         }
+function showISInfo() {
+            alert("【Coach (IS) 目標設定說明】\n\n1. 公式：採用 Knudson Predicted VC 標準。\n2. 目標：通常以預計肺活量的 50% 到 75% 作為練習目標。\n3. 臨床意義：若病人無法達成起始目標，需評估是否有術後疼痛、肺塌陷或痰液堆積。");
+        }
 
+        function calculateIS() {
+            const gender = document.getElementById('is_gender').value;
+            const age = parseFloat(document.getElementById('is_age').value);
+            const height = parseFloat(document.getElementById('is_height').value);
+            const resDiv = document.getElementById('isResult');
+            
+            if (age && height) {
+                let predictedVC = 0;
+                if (gender === 'male') {
+                    predictedVC = (0.052 * height) - (0.022 * age) - 3.60;
+                } else {
+                    predictedVC = (0.041 * height) - (0.018 * age) - 2.69;
+                }
+                
+                const vcML = Math.round(predictedVC * 1000);
+                document.getElementById('res-pvc').innerText = vcML;
+                document.getElementById('res-is-goal').innerText = Math.round(vcML * 0.6);
+                document.getElementById('res-is-range').innerText = Math.round(vcML * 0.5) + " - " + Math.round(vcML * 0.75);
+                
+                resDiv.style.display = 'block';
+                resDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                alert("請完整輸入年齡與身高");
+            }
+        }
         function calculateROX() {
             const s = parseFloat(document.getElementById('rox_spo2').value);
             let f = parseFloat(document.getElementById('rox_fio2').value);
