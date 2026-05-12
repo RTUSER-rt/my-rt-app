@@ -203,7 +203,7 @@
             <div class="card calc-container" style="border-top: 4px solid #43a047;">
                 <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
                     <div class="title">🟢 S/F Ratio</div>
-                    <span class="type">非侵入性氧合指標（免血氣）</span>
+                    <span class="type">非侵入性氧合指標</span>
                 </div>
                 <div class="input-row">
                     <div class="input-item"><label>SpO2 (%)</label><input type="number" id="sf_spo2" placeholder="%" class="input-small"></div>
@@ -226,7 +226,7 @@
                 </div>
                 <div class="input-row">
                     <div class="input-item"><label>PaCO2</label><input type="number" id="vd_paco2" placeholder="mmHg" class="input-small"></div>
-                    <div class="input-item"><label>PetCO2</label><input type="number" id="vd_petco2" placeholder="mmHg" class="input-small"></div>
+                    <div class="input-item"><label>EtCO₂</label><input type="number" id="vd_petco2" placeholder="mmHg" class="input-small"></div>
                 </div>
                 <button onclick="calculateVdVt()" class="btn" style="margin-top:15px; background:#6d4c41;">計算結果</button>
                 <div id="vdResult" class="result-panel" style="border-left-color:#6d4c41;">
@@ -239,7 +239,7 @@
             <div class="card calc-container" style="border-top: 4px solid #00796b;">
                 <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
                     <div class="title">🧪 Anion Gap <span onclick="openMenu('mudpilesModal')" style="cursor:pointer; color:#00796b; font-size:18px; margin-left:8px;">❗</span></div>
-                    <span class="type">Na⁺ − (Cl⁻ + HCO₃⁻)　　校正：AG + 2.5 × (4 − Albumin)</span>
+                    <span class="type" style="display:block;">Na⁺ − (Cl⁻ + HCO₃⁻)　校正：AG + 2.5 × (4 − Alb)</span>
                 </div>
                 <div class="input-row">
                     <div class="input-item"><label>Na⁺ (mEq/L)</label><input type="number" id="ag_na" placeholder="" class="input-small"></div>
@@ -270,18 +270,19 @@
                 </div>
                 <div class="input-row" style="margin-top:5px;">
                     <div class="input-item"><label>VT (mL)</label><input type="number" id="cr_vt" placeholder="" class="input-small"></div>
-                    <div class="input-item"><label>Flow (L/min)<br><span style="font-size:10px; color:#aaa;">選填</span></label><input type="number" id="cr_flow" placeholder="選填" class="input-small"></div>
+                    <div class="input-item"><label>Flow (L/min) <span style="font-size:10px; color:#aaa;">選填</span></label><input type="number" id="cr_flow" placeholder="" class="input-small"></div>
                 </div>
-                <div style="font-size:11px; color:#888; margin-top:8px; line-height:1.8; background:#f5f5f5; border-radius:8px; padding:8px 12px;">
-                    <span style="color:#1565c0; font-weight:bold;">Cdyn</span> = VT ÷ (Ppeak − PEEP)　　
+                <div style="font-size:11px; color:#888; margin-top:8px; background:#f5f5f5; border-radius:8px; padding:8px 12px; line-height:2;">
+                    <span style="color:#1565c0; font-weight:bold;">Cdyn</span> = VT ÷ (Ppeak − PEEP)<br>
                     <span style="color:#1565c0; font-weight:bold;">Cst</span> = VT ÷ (Pplat − PEEP)
                 </div>
                 <button onclick="calculateCR()" class="btn" style="margin-top:15px; background:#1565c0;">計算結果</button>
                 <div id="crResult" class="result-panel" style="border-left-color:#1565c0;">
-                    <div class="result-line"><span>Static Compliance (Cst):</span><b><span id="res-cst">--</span> mL/cmH₂O</b></div>
-                    <div class="result-line"><span>Dynamic Compliance (Cdyn):</span><b><span id="res-cdyn">--</span> mL/cmH₂O</b></div>
-                    <div class="result-line" id="res-raw-line"><span>Airway Resistance (Raw):</span><b><span id="res-raw">--</span> cmH₂O/L/s</b></div>
-                    <div class="result-line"><span>Driving Pressure (ΔP):</span><b><span id="res-dp">--</span> cmH₂O</b></div>
+                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;"><span>Static Compliance (Cst)</span><b><span id="res-cst">--</span> mL/cmH₂O</b></div>
+                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;"><span>Dynamic Compliance (Cdyn)</span><b><span id="res-cdyn">--</span> mL/cmH₂O</b></div>
+                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;" id="res-raw-line"><span>Airway Resistance (Raw)</span><b><span id="res-raw">--</span> cmH₂O/L/s</b></div>
+                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;"><span>Driving Pressure (ΔP)</span><b><span id="res-dp">--</span> cmH₂O</b></div>
+                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;" id="res-tc-line"><span>Time Constant (RC)</span><b><span id="res-tc">--</span> sec　<span id="res-tc-sub" style="font-size:11px; color:#888;"></span></b></div>
                     <div id="res-cr-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
                 </div>
             </div>
@@ -290,7 +291,7 @@
             <div class="card calc-container" style="border-top: 4px solid #4527a0;">
                 <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
                     <div class="title">⚡ Mechanical Power <span onclick="openMenu('mpModal')" style="cursor:pointer; color:#4527a0; font-size:18px; margin-left:8px;">❗</span></div>
-                    <span class="type">呼吸器能量傳遞 (J/min)　　公式：0.098 × RR × VT(L) × Pplat</span>
+                    <span class="type" style="display:block;">公式：0.098 × RR × VT(L) × Pplat</span>
                 </div>
                 <div class="input-row">
                     <div class="input-item"><label>RR</label><input type="number" id="mp_rr" placeholder="/min" class="input-small"></div>
@@ -374,7 +375,7 @@
         function closeMenu(id) { document.getElementById(id).style.display = 'none'; }
         
         function showRoxCriteria() { alert("【ROX Index】\n2hr: <2.85\n6hr: <3.47\n12hr: <3.85\n>12hr: <4.88 (安全 👌)"); }
-        function showISInfo() { alert("【Coach IS】\n建議目標：採用Knudson 公式,預計值 50%-75%\n榮總結案：術前 80%"); }
+        function showISInfo() { openMenu('isModal'); }
 
         function calculatePBW() {
             const h = document.getElementById('height').value;
@@ -550,20 +551,32 @@
             else interp.push('✅ Cst 正常（≥ 60）');
             if (parseFloat(dp) > 15) interp.push('⚠️ ΔP > 15，VILI 風險');
 
-            document.getElementById('res-cst').innerText = cst;
-            document.getElementById('res-cdyn').innerText = cdyn;
-            document.getElementById('res-dp').innerText = dp;
+            document.getElementById('res-cst').innerText = cst !== '--' ? cst : '--';
+            document.getElementById('res-cdyn').innerText = cdyn !== '--' ? cdyn : '--';
+            document.getElementById('res-dp').innerText = dp !== '--' ? dp : '--';
 
             // Raw only if Flow is provided
             const rawLine = document.getElementById('res-raw-line');
+            const tcLine = document.getElementById('res-tc-line');
             if (flow && flow > 0) {
                 const flowLs = flow / 60;
                 const raw = ((ppeak - pplat) / flowLs).toFixed(1);
                 document.getElementById('res-raw').innerText = raw;
                 rawLine.style.display = 'flex';
+                // Time Constant = Cst(L/cmH2O) × Raw
+                if (cst !== '--') {
+                    const tc = (parseFloat(cst) / 1000 * parseFloat(raw)).toFixed(2);
+                    document.getElementById('res-tc').innerText = tc;
+                    const tcNote = parseFloat(tc) < 0.5 ? '偏短，氣體分佈不均風險' : parseFloat(tc) > 1.5 ? '偏長，注意 auto-PEEP' : '正常範圍';
+                    document.getElementById('res-tc-sub').innerText = tcNote;
+                    tcLine.style.display = 'flex';
+                } else {
+                    tcLine.style.display = 'none';
+                }
                 if (parseFloat(raw) > 15) interp.push('🚨 Raw 升高（> 15）');
             } else {
                 rawLine.style.display = 'none';
+                tcLine.style.display = 'none';
             }
 
             document.getElementById('res-cr-interp').innerText = interp.join(' | ');
@@ -753,6 +766,40 @@
             </div>
             <div style="margin-top:14px; font-size:11px; color:#aaa; text-align:center;">正常 AG ≤ 12 mEq/L　　低白蛋白時需校正</div>
             <button onclick="closeMenu('mudpilesModal')" class="close-btn" style="margin-top:15px;">關閉</button>
+        </div>
+    </div>
+    <!-- Coach IS Modal -->
+    <div id="isModal" class="overlay" onclick="closeMenu('isModal')">
+        <div class="menu" onclick="event.stopPropagation()" style="width:92%; max-width:480px; padding:15px; max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:15px;">
+                <h3 style="margin:0;">🫀 Coach IS 公式說明</h3>
+                <button onclick="closeMenu('isModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
+            </div>
+
+            <div style="font-weight:bold; color:#555; margin-bottom:8px;">Knudson 預計 VC 公式</div>
+            <div style="background:#fff8e1; border-radius:10px; padding:12px 15px; margin-bottom:12px; font-size:13px; line-height:2;">
+                <div>👨 <b>男性：</b>VC = 0.052 × 身高(cm) − 0.022 × 年齡 − 3.60</div>
+                <div>👩 <b>女性：</b>VC = 0.041 × 身高(cm) − 0.018 × 年齡 − 2.69</div>
+                <div style="font-size:11px; color:#999; margin-top:4px;">單位：公升（L）</div>
+            </div>
+
+            <div style="font-weight:bold; color:#555; margin-bottom:8px;">目標設定</div>
+            <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#f5f5f5; border-radius:10px; padding:10px 15px;">
+                    <span>目標值（顯示）</span>
+                    <b style="color:#e67e22;">預計 VC × 60%</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#f5f5f5; border-radius:10px; padding:10px 15px;">
+                    <span>建議範圍</span>
+                    <b style="color:#f4b400;">預計 VC × 50–75%</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#e8f5e9; border-radius:10px; padding:10px 15px; border:1px solid #a5d6a7;">
+                    <span>🏥 榮總結案標準</span>
+                    <b style="color:#2e7d32;">術前 VC × 80%</b>
+                </div>
+            </div>
+
+            <button onclick="closeMenu('isModal')" class="close-btn" style="margin-top:15px;">關閉</button>
         </div>
     </div>
 
