@@ -168,18 +168,19 @@
     </div>
 
     <!-- 進階計算器 可收合區塊 -->
-    <div class="collapse-wrapper">
-        <div class="collapse-header" onclick="toggleCollapse()">
-            <div class="collapse-header-left">
+    <div class="collapse-wrapper" id="advCalcWrapper">
+        <div id="advCalcHeader" style="background:white; border-radius:15px; padding:15px 20px; box-shadow:0 4px 6px rgba(0,0,0,0.1); border:2px solid #e8eaf6; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;">
+            <div style="display:flex; align-items:center; gap:10px; pointer-events:none;">
                 <span style="font-size:22px;">🧮</span>
                 <div>
-                    <div class="collapse-header-title">進階臨床計算器</div>
-                    <div class="collapse-header-sub">P/F / S/F / Vd/Vt / OI / CaO2 / DO2 / Compliance / MP</div>
+                    <div style="font-weight:bold; font-size:17px; color:#333;">進階臨床計算器</div>
+                    <div style="font-size:12px; color:#888; margin-top:3px;">P/F / S/F / Vd/Vt / AG / Compliance / MP</div>
                 </div>
             </div>
-            <span class="collapse-arrow" id="collapseArrow">▼</span>
+            <span id="advCalcArrow" style="font-size:18px; color:#888; pointer-events:none; transition:transform 0.3s; display:inline-block;">▼</span>
         </div>
-        <div id="collapseBody" style="display:none;">
+        <div id="advCalcBody" style="display:none; padding-top:5px;">
+<div style="padding-top:5px;">
 
             <!-- P/F Ratio -->
             <div class="card calc-container" style="border-top: 4px solid #fb8c00;">
@@ -234,58 +235,25 @@
                 </div>
             </div>
 
-            <!-- Oxygen Index -->
-            <div class="card calc-container" style="border-top: 4px solid #00838f;">
+            <!-- Anion Gap -->
+            <div class="card calc-container" style="border-top: 4px solid #00796b;">
                 <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-                    <div class="title">🩵 Oxygen Index (OI)</div>
-                    <span class="type">兒科/ECMO 嚴重度指標</span>
+                    <div class="title">🧪 Anion Gap <span onclick="openMenu('mudpilesModal')" style="cursor:pointer; color:#00796b; font-size:18px; margin-left:8px;">❗</span></div>
+                    <span class="type">Na⁺ − (Cl⁻ + HCO₃⁻)　　校正：AG + 2.5 × (4 − Albumin)</span>
                 </div>
                 <div class="input-row">
-                    <div class="input-item"><label>FiO2 (%)</label><input type="number" id="oi_fio2" placeholder="21-100" class="input-small"></div>
-                    <div class="input-item"><label>mPaw (cmH₂O)</label><input type="number" id="oi_mpaw" placeholder="cmH₂O" class="input-small"></div>
-                    <div class="input-item"><label>PaO2</label><input type="number" id="oi_pao2" placeholder="mmHg" class="input-small"></div>
+                    <div class="input-item"><label>Na⁺ (mEq/L)</label><input type="number" id="ag_na" placeholder="" class="input-small"></div>
+                    <div class="input-item"><label>Cl⁻ (mEq/L)</label><input type="number" id="ag_cl" placeholder="" class="input-small"></div>
+                    <div class="input-item"><label>HCO₃⁻ (mEq/L)</label><input type="number" id="ag_hco3" placeholder="" class="input-small"></div>
                 </div>
-                <button onclick="calculateOI()" class="btn" style="margin-top:15px; background:#00838f;">計算結果</button>
-                <div id="oiResult" class="result-panel" style="border-left-color:#00838f;">
-                    <div class="result-line"><span>Oxygen Index:</span><b><span id="res-oi">--</span></b></div>
-                    <div id="res-oi-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                <div class="input-row" style="margin-top:5px;">
+                    <div class="input-item"><label>Albumin (g/dL)<br><span style="font-size:10px; color:#aaa;">選填，用於校正</span></label><input type="number" id="ag_alb" placeholder="正常值 4.0" class="input-small"></div>
                 </div>
-            </div>
-
-            <!-- CaO2 -->
-            <div class="card calc-container" style="border-top: 4px solid #c62828;">
-                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-                    <div class="title">🩸 CaO2 動脈氧含量</div>
-                    <span class="type">Arterial Oxygen Content</span>
-                </div>
-                <div class="input-row">
-                    <div class="input-item"><label>Hb (g/dL)</label><input type="number" id="cao2_hb" placeholder="g/dL" class="input-small"></div>
-                    <div class="input-item"><label>SaO2 (%)</label><input type="number" id="cao2_sao2" placeholder="%" class="input-small"></div>
-                    <div class="input-item"><label>PaO2</label><input type="number" id="cao2_pao2" placeholder="mmHg" class="input-small"></div>
-                </div>
-                <button onclick="calculateCaO2()" class="btn" style="margin-top:15px; background:#c62828;">計算結果</button>
-                <div id="cao2Result" class="result-panel" style="border-left-color:#c62828;">
-                    <div class="result-line"><span>CaO2:</span><b><span id="res-cao2">--</span> mL/dL</b></div>
-                    <div class="result-line" style="font-size:12px; color:#888;"><span>正常值：18–21 mL/dL</span></div>
-                </div>
-            </div>
-
-            <!-- DO2 -->
-            <div class="card calc-container" style="border-top: 4px solid #ad1457;">
-                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-                    <div class="title">💗 DO2 氧氣輸送量</div>
-                    <span class="type">Oxygen Delivery</span>
-                </div>
-                <div class="input-row">
-                    <div class="input-item"><label>CaO2 (mL/dL)</label><input type="number" id="do2_cao2" placeholder="mL/dL" class="input-small"></div>
-                    <div class="input-item"><label>CO (L/min)</label><input type="number" id="do2_co" placeholder="L/min" class="input-small"></div>
-                </div>
-                <div style="font-size: 12px; color: #888; text-align: center; margin-top: 8px;">若無 CaO2，可先用上方計算後填入</div>
-                <button onclick="calculateDO2()" class="btn" style="margin-top:15px; background:#ad1457;">計算結果</button>
-                <div id="do2Result" class="result-panel" style="border-left-color:#ad1457;">
-                    <div class="result-line"><span>DO2:</span><b><span id="res-do2">--</span> mL/min</b></div>
-                    <div class="result-line" style="font-size:12px; color:#888;"><span>正常值：950–1150 mL/min</span></div>
-                    <div id="res-do2-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                <button onclick="calculateAG()" class="btn" style="margin-top:15px; background:#00796b;">計算結果</button>
+                <div id="agResult" class="result-panel" style="border-left-color:#00796b;">
+                    <div class="result-line"><span>Anion Gap:</span><b><span id="res-ag">--</span> mEq/L</b></div>
+                    <div class="result-line" id="res-ag-corr-line"><span>校正 AG (corrected):</span><b><span id="res-ag-corr">--</span> mEq/L</b></div>
+                    <div id="res-ag-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
                 </div>
             </div>
 
@@ -302,12 +270,17 @@
                 </div>
                 <div class="input-row" style="margin-top:5px;">
                     <div class="input-item"><label>VT (mL)</label><input type="number" id="cr_vt" placeholder="" class="input-small"></div>
-                    <div class="input-item"><label>Flow (L/min)</label><input type="number" id="cr_flow" placeholder="" class="input-small"></div>
+                    <div class="input-item"><label>Flow (L/min)<br><span style="font-size:10px; color:#aaa;">選填</span></label><input type="number" id="cr_flow" placeholder="選填" class="input-small"></div>
+                </div>
+                <div style="font-size:11px; color:#888; margin-top:8px; line-height:1.8; background:#f5f5f5; border-radius:8px; padding:8px 12px;">
+                    <span style="color:#1565c0; font-weight:bold;">Cdyn</span> = VT ÷ (Ppeak − PEEP)　　
+                    <span style="color:#1565c0; font-weight:bold;">Cst</span> = VT ÷ (Pplat − PEEP)
                 </div>
                 <button onclick="calculateCR()" class="btn" style="margin-top:15px; background:#1565c0;">計算結果</button>
                 <div id="crResult" class="result-panel" style="border-left-color:#1565c0;">
                     <div class="result-line"><span>Static Compliance (Cst):</span><b><span id="res-cst">--</span> mL/cmH₂O</b></div>
-                    <div class="result-line"><span>Airway Resistance (Raw):</span><b><span id="res-raw">--</span> cmH₂O/L/s</b></div>
+                    <div class="result-line"><span>Dynamic Compliance (Cdyn):</span><b><span id="res-cdyn">--</span> mL/cmH₂O</b></div>
+                    <div class="result-line" id="res-raw-line"><span>Airway Resistance (Raw):</span><b><span id="res-raw">--</span> cmH₂O/L/s</b></div>
                     <div class="result-line"><span>Driving Pressure (ΔP):</span><b><span id="res-dp">--</span> cmH₂O</b></div>
                     <div id="res-cr-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
                 </div>
@@ -316,18 +289,13 @@
             <!-- Mechanical Power -->
             <div class="card calc-container" style="border-top: 4px solid #4527a0;">
                 <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-                    <div class="title">⚡ Mechanical Power</div>
-                    <span class="type">呼吸器能量傳遞 (J/min)</span>
+                    <div class="title">⚡ Mechanical Power <span onclick="openMenu('mpModal')" style="cursor:pointer; color:#4527a0; font-size:18px; margin-left:8px;">❗</span></div>
+                    <span class="type">呼吸器能量傳遞 (J/min)　　公式：0.098 × RR × VT(L) × Pplat</span>
                 </div>
                 <div class="input-row">
                     <div class="input-item"><label>RR</label><input type="number" id="mp_rr" placeholder="/min" class="input-small"></div>
                     <div class="input-item"><label>VT (mL)</label><input type="number" id="mp_vt" placeholder="mL" class="input-small"></div>
-                    <div class="input-item"><label>Ppeak</label><input type="number" id="mp_ppeak" placeholder="cmH₂O" class="input-small"></div>
-                </div>
-                <div class="input-row" style="margin-top:5px;">
-                    <div class="input-item"><label>PEEP</label><input type="number" id="mp_peep" placeholder="cmH₂O" class="input-small"></div>
-                    <div class="input-item"><label>Pplat</label><input type="number" id="mp_pplat" placeholder="cmH₂O" class="input-small"></div>
-                    <div class="input-item"><label>I:E (0.5 = 1:2)</label><input type="number" id="mp_ie" placeholder="0.5" class="input-small"></div>
+                    <div class="input-item"><label>Pplat (cmH₂O)</label><input type="number" id="mp_pplat" placeholder="cmH₂O" class="input-small"></div>
                 </div>
                 <button onclick="calculateMP()" class="btn" style="margin-top:15px; background:#4527a0;">計算結果</button>
                 <div id="mpResult" class="result-panel" style="border-left-color:#4527a0;">
@@ -336,8 +304,22 @@
                 </div>
             </div>
 
-        </div><!-- end collapseBody -->
-    </div><!-- end collapse-wrapper -->
+        </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('advCalcHeader').addEventListener('click', function() {
+            var body = document.getElementById('advCalcBody');
+            var arrow = document.getElementById('advCalcArrow');
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                body.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        });
+    </script>
 
     <div class="card" style="border: 2px dashed #1a73e8; background: #e8f0fe; flex-direction: row;">
         <div class="info" style="border:none; padding:0; margin:0;"><div class="title" style="font-size: 16px;">📂 開啟手機內的 PDF</div></div>
@@ -390,18 +372,6 @@
     <script>
         function openMenu(id) { document.getElementById(id).style.display = 'flex'; }
         function closeMenu(id) { document.getElementById(id).style.display = 'none'; }
-
-        function toggleCollapse() {
-            const body = document.getElementById('collapseBody');
-            const arrow = document.getElementById('collapseArrow');
-            if (body.style.display === 'block') {
-                body.style.display = 'none';
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                body.style.display = 'block';
-                arrow.style.transform = 'rotate(180deg)';
-            }
-        }
         
         function showRoxCriteria() { alert("【ROX Index】\n2hr: <2.85\n6hr: <3.47\n12hr: <3.85\n>12hr: <4.88 (安全 👌)"); }
         function showISInfo() { alert("【Coach IS】\n建議目標：採用Knudson 公式,預計值 50%-75%\n榮總結案：術前 80%"); }
@@ -530,42 +500,27 @@
             document.getElementById('vdResult').style.display = 'block';
         }
 
-        // Oxygen Index
-        function calculateOI() {
-            let fio2 = parseFloat(document.getElementById('oi_fio2').value);
-            const mpaw = parseFloat(document.getElementById('oi_mpaw').value);
-            const pao2 = parseFloat(document.getElementById('oi_pao2').value);
-            if (!fio2 || !mpaw || !pao2) return;
-            if (fio2 <= 1) fio2 *= 100;
-            const oi = ((fio2 * mpaw) / pao2).toFixed(1);
-            let interp = oi < 5 ? '✅ 正常' : oi < 15 ? '🟡 輕度' : oi < 25 ? '🟠 中度' : '🚨 重度（考慮 ECMO > 25）';
-            document.getElementById('res-oi').innerText = oi;
-            document.getElementById('res-oi-interp').innerText = interp;
-            document.getElementById('oiResult').style.display = 'block';
-        }
-
-        // CaO2
-        function calculateCaO2() {
-            const hb = parseFloat(document.getElementById('cao2_hb').value);
-            let sao2 = parseFloat(document.getElementById('cao2_sao2').value);
-            const pao2 = parseFloat(document.getElementById('cao2_pao2').value);
-            if (!hb || !sao2 || !pao2) return;
-            if (sao2 > 1) sao2 /= 100;
-            const cao2 = (1.34 * hb * sao2 + 0.0031 * pao2).toFixed(1);
-            document.getElementById('res-cao2').innerText = cao2;
-            document.getElementById('cao2Result').style.display = 'block';
-        }
-
-        // DO2
-        function calculateDO2() {
-            const cao2 = parseFloat(document.getElementById('do2_cao2').value);
-            const co = parseFloat(document.getElementById('do2_co').value);
-            if (!cao2 || !co) return;
-            const do2 = (cao2 * co * 10).toFixed(0);
-            let interp = do2 >= 950 && do2 <= 1150 ? '✅ 正常範圍' : do2 < 950 ? '🚨 偏低，注意組織缺氧' : '⚠️ 偏高';
-            document.getElementById('res-do2').innerText = do2;
-            document.getElementById('res-do2-interp').innerText = interp;
-            document.getElementById('do2Result').style.display = 'block';
+        // Anion Gap
+        function calculateAG() {
+            const na = parseFloat(document.getElementById('ag_na').value);
+            const cl = parseFloat(document.getElementById('ag_cl').value);
+            const hco3 = parseFloat(document.getElementById('ag_hco3').value);
+            const alb = parseFloat(document.getElementById('ag_alb').value);
+            if (isNaN(na) || isNaN(cl) || isNaN(hco3)) return;
+            const ag = (na - cl - hco3).toFixed(1);
+            let interp = ag <= 12 ? '✅ 正常 (≤ 12)' : ag <= 20 ? '⚠️ 輕度升高 (12–20)' : '🚨 顯著升高 (> 20)，考慮 MUDPILES';
+            document.getElementById('res-ag').innerText = ag;
+            const corrLine = document.getElementById('res-ag-corr-line');
+            if (!isNaN(alb)) {
+                const agCorr = (parseFloat(ag) + 2.5 * (4 - alb)).toFixed(1);
+                document.getElementById('res-ag-corr').innerText = agCorr;
+                corrLine.style.display = 'flex';
+                if (parseFloat(agCorr) > 12 && parseFloat(ag) <= 12) interp = '⚠️ 校正後 AG 升高，注意低白蛋白掩蓋';
+            } else {
+                corrLine.style.display = 'none';
+            }
+            document.getElementById('res-ag-interp').innerText = interp;
+            document.getElementById('agResult').style.display = 'block';
         }
 
         // Compliance & Resistance
@@ -575,20 +530,42 @@
             const peep = parseFloat(document.getElementById('cr_peep').value);
             const vt = parseFloat(document.getElementById('cr_vt').value);
             const flow = parseFloat(document.getElementById('cr_flow').value);
-            if (!ppeak || !pplat || peep === undefined || !vt || !flow) return;
-            const cst = (vt / (pplat - peep)).toFixed(1);
-            const flowLs = flow / 60;
-            const raw = ((ppeak - pplat) / flowLs).toFixed(1);
-            const dp = (pplat - peep).toFixed(1);
+
+            // Require at minimum: PEEP, VT, and at least one of Ppeak or Pplat
+            if (isNaN(peep) || isNaN(vt) || !vt) return;
+            if (isNaN(ppeak) && isNaN(pplat)) return;
+
+            // Static Compliance: Cst = VT / (Pplat - PEEP)
+            const cst = (!isNaN(pplat) && pplat - peep > 0) ? (vt / (pplat - peep)).toFixed(1) : '--';
+
+            // Dynamic Compliance: Cdyn = VT / (Ppeak - PEEP)
+            const cdyn = (!isNaN(ppeak) && ppeak - peep > 0) ? (vt / (ppeak - peep)).toFixed(1) : '--';
+
+            // Driving Pressure
+            const dp = (!isNaN(pplat) && pplat - peep > 0) ? (pplat - peep).toFixed(1) : '--';
+
             let interp = [];
-            if (cst < 40) interp.push('🚨 Cst 偏低（< 40）');
-            else if (cst < 60) interp.push('⚠️ Cst 略低');
-            else interp.push('✅ Cst 正常');
-            if (raw > 15) interp.push('🚨 Raw 升高（> 15）');
-            if (dp > 15) interp.push('⚠️ ΔP > 15，VILI 風險');
+            if (parseFloat(cst) < 40) interp.push('🚨 Cst 偏低（< 40）');
+            else if (parseFloat(cst) < 60) interp.push('⚠️ Cst 略低（40–60）');
+            else interp.push('✅ Cst 正常（≥ 60）');
+            if (parseFloat(dp) > 15) interp.push('⚠️ ΔP > 15，VILI 風險');
+
             document.getElementById('res-cst').innerText = cst;
-            document.getElementById('res-raw').innerText = raw;
+            document.getElementById('res-cdyn').innerText = cdyn;
             document.getElementById('res-dp').innerText = dp;
+
+            // Raw only if Flow is provided
+            const rawLine = document.getElementById('res-raw-line');
+            if (flow && flow > 0) {
+                const flowLs = flow / 60;
+                const raw = ((ppeak - pplat) / flowLs).toFixed(1);
+                document.getElementById('res-raw').innerText = raw;
+                rawLine.style.display = 'flex';
+                if (parseFloat(raw) > 15) interp.push('🚨 Raw 升高（> 15）');
+            } else {
+                rawLine.style.display = 'none';
+            }
+
             document.getElementById('res-cr-interp').innerText = interp.join(' | ');
             document.getElementById('crResult').style.display = 'block';
         }
@@ -597,14 +574,11 @@
         function calculateMP() {
             const rr = parseFloat(document.getElementById('mp_rr').value);
             const vt = parseFloat(document.getElementById('mp_vt').value);
-            const ppeak = parseFloat(document.getElementById('mp_ppeak').value);
-            const peep = parseFloat(document.getElementById('mp_peep').value);
             const pplat = parseFloat(document.getElementById('mp_pplat').value);
-            const ie = parseFloat(document.getElementById('mp_ie').value) || 0.5;
-            if (!rr || !vt || !ppeak || peep === undefined || !pplat) return;
-            // MP = 0.098 * RR * VT(L) * (Ppeak + PEEP + (Ppeak - Pplat)/2 ... simplified:
+            if (!rr || !vt || !pplat) return;
+            // MP = 0.098 × RR × VT(L) × Pplat (簡化公式，Chest 2024)
             const vtL = vt / 1000;
-            const mp = (0.098 * rr * vtL * (pplat - peep + peep + (ppeak - pplat))).toFixed(1);
+            const mp = (0.098 * rr * vtL * pplat).toFixed(1);
             let interp = mp < 17 ? '✅ 低風險 (< 17 J/min)' : mp < 22 ? '⚠️ 中度風險 (17–22 J/min)' : '🚨 高風險，考慮調整參數 (> 22 J/min)';
             document.getElementById('res-mp').innerText = mp;
             document.getElementById('res-mp-interp').innerText = interp;
@@ -652,6 +626,135 @@
         </div>
     </div>
 
+
+    <!-- MP Paper Modal -->
+    <div id="mpModal" class="overlay" onclick="closeMenu('mpModal')">
+        <div class="menu" onclick="event.stopPropagation()" style="width:95%; max-width:580px; padding:15px; max-height:92vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                <h3 style="margin:0;">⚡ Mechanical Power 公式摘要</h3>
+                <button onclick="closeMenu('mpModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
+            </div>
+            <svg width="100%" viewBox="0 0 680 580" role="img">
+<title>Mechanical Power 簡化公式摘要圖</title>
+<desc>整理 Chest 2024 paper 的 MP 公式、比較、風險分級與臨床意義</desc>
+<defs>
+  <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<g style="fill:#534AB7">
+  <rect x="20" y="16" width="640" height="46" rx="10" stroke="#AFA9EC" stroke-width="0.5" fill="#EEEDFE"/>
+  <text font-family="sans-serif" font-weight="500" font-size="15" x="340" y="44" text-anchor="middle" fill="#3C3489">Mechanical Power — 公式比較與臨床應用</text>
+</g>
+<text font-family="sans-serif" font-size="12" x="340" y="57" text-anchor="middle" fill="#888">Chest 2024 · Journal of Intensive Care</text>
+
+<text font-family="sans-serif" font-weight="500" font-size="13" x="30" y="88" fill="#333">公式比較</text>
+<rect x="20" y="96" width="300" height="68" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="12" x="170" y="120" text-anchor="middle" fill="#5F5E5A">傳統 Gattinoni 公式（VCV）</text>
+<text font-family="sans-serif" font-weight="500" font-size="11" x="170" y="148" text-anchor="middle" fill="#2C2C2A">0.098 × RR × VT × (Ppeak + PEEP + ΔP/2)</text>
+<text font-family="sans-serif" font-size="11" x="170" y="178" text-anchor="middle" fill="#888">需要 5–6 個參數，計算繁瑣</text>
+
+<line x1="338" y1="130" x2="362" y2="130" stroke="#639922" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+<rect x="370" y="96" width="290" height="68" rx="8" fill="#EAF3DE" stroke="#639922" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="12" x="515" y="120" text-anchor="middle" fill="#3B6D11">新簡化公式（Chest 2024）</text>
+<text font-family="sans-serif" font-weight="500" font-size="14" x="515" y="148" text-anchor="middle" fill="#173404">0.098 × RR × VT × Pplat</text>
+<text font-family="sans-serif" font-size="11" x="515" y="178" text-anchor="middle" fill="#888">只需 3 個參數，床邊即可計算</text>
+
+<text font-family="sans-serif" font-weight="500" font-size="13" x="30" y="204" fill="#333">準確度</text>
+<rect x="20" y="212" width="640" height="46" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="12" x="340" y="230" text-anchor="middle" fill="#085041">Bias = 0.2 J/min　　95% LoA = −3.1 to +3.4 J/min</text>
+<text font-family="sans-serif" font-size="12" x="340" y="248" text-anchor="middle" fill="#085041">所有簡化公式中 bias 最低，臨床精度足夠</text>
+
+<text font-family="sans-serif" font-weight="500" font-size="13" x="30" y="278" fill="#333">風險分級</text>
+<rect x="20" y="286" width="196" height="54" rx="8" fill="#EAF3DE" stroke="#639922" stroke-width="0.5"/>
+<text font-family="sans-serif" font-weight="500" font-size="13" x="118" y="308" text-anchor="middle" fill="#173404">低風險</text>
+<text font-family="sans-serif" font-size="12" x="118" y="328" text-anchor="middle" fill="#3B6D11">&lt; 17 J/min</text>
+
+<rect x="232" y="286" width="196" height="54" rx="8" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+<text font-family="sans-serif" font-weight="500" font-size="13" x="330" y="308" text-anchor="middle" fill="#412402">中度風險</text>
+<text font-family="sans-serif" font-size="12" x="330" y="328" text-anchor="middle" fill="#854F0B">17–22 J/min</text>
+
+<rect x="444" y="286" width="216" height="54" rx="8" fill="#FCEBEB" stroke="#E24B4A" stroke-width="0.5"/>
+<text font-family="sans-serif" font-weight="500" font-size="13" x="552" y="308" text-anchor="middle" fill="#501313">高風險（VILI）</text>
+<text font-family="sans-serif" font-size="12" x="552" y="328" text-anchor="middle" fill="#A32D2D">&gt; 22 J/min</text>
+
+<text font-family="sans-serif" font-weight="500" font-size="13" x="30" y="366" fill="#333">MP 由哪些因素決定</text>
+<rect x="20" y="374" width="140" height="52" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text font-family="sans-serif" font-weight="500" font-size="13" x="90" y="396" text-anchor="middle" fill="#042C53">呼吸頻率</text>
+<text font-family="sans-serif" font-size="11" x="90" y="416" text-anchor="middle" fill="#185FA5">RR ↑ → MP ↑</text>
+
+<rect x="178" y="374" width="140" height="52" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text font-family="sans-serif" font-weight="500" font-size="13" x="248" y="396" text-anchor="middle" fill="#042C53">潮氣容積</text>
+<text font-family="sans-serif" font-size="11" x="248" y="416" text-anchor="middle" fill="#185FA5">VT ↑ → MP ↑</text>
+
+<rect x="336" y="374" width="140" height="52" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+<text font-family="sans-serif" font-weight="500" font-size="13" x="406" y="396" text-anchor="middle" fill="#042C53">平台壓</text>
+<text font-family="sans-serif" font-size="11" x="406" y="416" text-anchor="middle" fill="#185FA5">Pplat ↑ → MP ↑</text>
+
+<rect x="494" y="374" width="166" height="52" rx="8" fill="#FAECE7" stroke="#D85A30" stroke-width="0.5"/>
+<text font-family="sans-serif" font-weight="500" font-size="13" x="577" y="396" text-anchor="middle" fill="#4A1B0C">VILI 風險</text>
+<text font-family="sans-serif" font-size="11" x="577" y="416" text-anchor="middle" fill="#993C1D">MP 過高傷肺</text>
+
+<line x1="160" y1="400" x2="176" y2="400" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow2)"/>
+<line x1="318" y1="400" x2="334" y2="400" stroke="#378ADD" stroke-width="1.5" marker-end="url(#arrow2)"/>
+<line x1="478" y1="400" x2="492" y2="400" stroke="#D85A30" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+<text font-family="sans-serif" font-weight="500" font-size="13" x="30" y="450" fill="#333">臨床建議</text>
+<rect x="20" y="458" width="640" height="104" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text font-family="sans-serif" font-size="12" x="36" y="482" fill="#444">• MP 整合 VT、Pplat、RR，是比單一參數更全面的保護通氣指標</text>
+<text font-family="sans-serif" font-size="12" x="36" y="506" fill="#444">• 超過 17–22 J/min，考慮降低 RR、VT 或改善 Pplat 以減少 VILI 風險</text>
+<text font-family="sans-serif" font-size="12" x="36" y="530" fill="#444">• 只需 inspiratory hold 取得 Pplat，適合床邊日常使用</text>
+</svg>
+            <button onclick="closeMenu('mpModal')" class="close-btn" style="margin-top:15px;">關閉</button>
+        </div>
+    </div>
+    <!-- MUDPILES Modal -->
+    <div id="mudpilesModal" class="overlay" onclick="closeMenu('mudpilesModal')">
+        <div class="menu" onclick="event.stopPropagation()" style="width:92%; max-width:480px; padding:15px; max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:15px;">
+                <h3 style="margin:0;">🧪 MUDPILES — High AG 原因</h3>
+                <button onclick="closeMenu('mudpilesModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
+            </div>
+            <div style="font-size:13px; color:#666; margin-bottom:12px;">High Anion Gap Metabolic Acidosis 常見原因</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; align-items:center; gap:12px; background:#e0f2f1; border-radius:10px; padding:10px 14px;">
+                    <span style="font-size:22px; font-weight:bold; color:#00796b; min-width:28px;">M</span>
+                    <div><div style="font-weight:bold; color:#004d40;">Methanol</div><div style="font-size:12px; color:#555;">甲醇中毒</div></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; background:#e0f2f1; border-radius:10px; padding:10px 14px;">
+                    <span style="font-size:22px; font-weight:bold; color:#00796b; min-width:28px;">U</span>
+                    <div><div style="font-weight:bold; color:#004d40;">Uremia</div><div style="font-size:12px; color:#555;">尿毒症（腎衰竭）</div></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; background:#e0f2f1; border-radius:10px; padding:10px 14px;">
+                    <span style="font-size:22px; font-weight:bold; color:#00796b; min-width:28px;">D</span>
+                    <div><div style="font-weight:bold; color:#004d40;">DKA</div><div style="font-size:12px; color:#555;">糖尿病酮酸中毒</div></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; background:#e0f2f1; border-radius:10px; padding:10px 14px;">
+                    <span style="font-size:22px; font-weight:bold; color:#00796b; min-width:28px;">P</span>
+                    <div><div style="font-weight:bold; color:#004d40;">Propylene glycol / Paraldehyde</div><div style="font-size:12px; color:#555;">藥物中毒</div></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; background:#e0f2f1; border-radius:10px; padding:10px 14px;">
+                    <span style="font-size:22px; font-weight:bold; color:#00796b; min-width:28px;">I</span>
+                    <div><div style="font-weight:bold; color:#004d40;">Isoniazid / Iron</div><div style="font-size:12px; color:#555;">異菸鹼醯胺 / 鐵中毒</div></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; background:#fff3e0; border-radius:10px; padding:10px 14px; border:1px solid #ffb74d;">
+                    <span style="font-size:22px; font-weight:bold; color:#e65100; min-width:28px;">L</span>
+                    <div><div style="font-weight:bold; color:#bf360c;">Lactic acidosis</div><div style="font-size:12px; color:#555;">乳酸酸中毒（最常見！）</div></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; background:#e0f2f1; border-radius:10px; padding:10px 14px;">
+                    <span style="font-size:22px; font-weight:bold; color:#00796b; min-width:28px;">E</span>
+                    <div><div style="font-weight:bold; color:#004d40;">Ethylene glycol</div><div style="font-size:12px; color:#555;">乙二醇（防凍液）中毒</div></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; background:#e0f2f1; border-radius:10px; padding:10px 14px;">
+                    <span style="font-size:22px; font-weight:bold; color:#00796b; min-width:28px;">S</span>
+                    <div><div style="font-weight:bold; color:#004d40;">Salicylates</div><div style="font-size:12px; color:#555;">水楊酸中毒（阿斯匹林）</div></div>
+                </div>
+            </div>
+            <div style="margin-top:14px; font-size:11px; color:#aaa; text-align:center;">正常 AG ≤ 12 mEq/L　　低白蛋白時需校正</div>
+            <button onclick="closeMenu('mudpilesModal')" class="close-btn" style="margin-top:15px;">關閉</button>
+        </div>
+    </div>
+
 </body>
 </html>
-
