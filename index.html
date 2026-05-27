@@ -439,7 +439,135 @@
                 </div>
             </div>
 
+            <!-- DO2 氧氣輸送量 -->
+            <div class="card calc-container" style="border-top: 4px solid #e53935;">
+                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+                    <div class="title">
+                        🫀 DO₂ 氧氣輸送量
+                        <span onclick="openMenu('do2ConceptModal')" style="cursor:pointer; color:#e53935; font-size:18px; margin-left:8px;">❗</span>
+                    </div>
+                    <span class="type">DO₂ = CO × CaO₂ × 10　　CaO₂ = (1.34 × Hb × SaO₂) + (0.003 × PaO₂)　　正常值：520–570 mL/min</span>
+                </div>
+                <div class="input-row">
+                    <div class="input-item"><label>CO (L/min)</label><input type="number" id="do2_co" placeholder="4.0" class="input-small" step="0.1" inputmode="decimal"></div>
+                    <div class="input-item"><label>Hb (g/dL)</label><input type="number" id="do2_hb" placeholder="12.0" class="input-small" step="0.1" inputmode="decimal"></div>
+                    <div class="input-item"><label>SaO₂ (%)</label><input type="number" id="do2_sao2" placeholder="95" class="input-small" inputmode="decimal"></div>
+                    <div class="input-item"><label>PaO₂ (mmHg)</label><input type="number" id="do2_pao2" placeholder="80" class="input-small" inputmode="decimal"></div>
+                </div>
+                <button onclick="calculateDO2()" class="btn" style="margin-top:15px; background:#e53935;">計算結果</button>
+                <div id="do2Result" class="result-panel" style="border-left-color:#e53935;">
+                    <div class="result-line"><span>DO₂</span><b><span id="res-do2">--</span> mL/min</b></div>
+                    <div class="result-line"><span>CaO₂</span><b><span id="res-cao2">--</span> mL/dL</b></div>
+                    <div class="result-line"><span>Hb 攜帶</span><b><span id="res-hb-carry">--</span> mL/min</b></div>
+                    <div id="res-do2-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                </div>
+            </div>
+
+            <!-- VO2 耗氧量 -->
+            <div class="card calc-container" style="border-top: 4px solid #7b1fa2;">
+                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+                    <div class="title">
+                        🫁 VO₂ 耗氧量 及 DO₂:VO₂
+                        <span onclick="openMenu('vo2ConceptModal')" style="cursor:pointer; color:#7b1fa2; font-size:18px; margin-left:8px;">❗</span>
+                    </div>
+                    <span class="type">VO₂ = CO × (CaO₂ − CvO₂) × 10　　目標：DO₂:VO₂ ≥ 3:1　　SvO₂ > 66%</span>
+                </div>
+                <div style="font-weight:bold; font-size:13px; color:#555; margin-top:12px;">動脈端</div>
+                <div class="input-row" style="margin-top:4px;">
+                    <div class="input-item"><label>CO (L/min)</label><input type="number" id="vo2_co" placeholder="4.0" class="input-small" step="0.1"></div>
+                    <div class="input-item"><label>Hb (g/dL)</label><input type="number" id="vo2_hb" placeholder="12.0" class="input-small" step="0.1"></div>
+                    <div class="input-item"><label>SaO₂ (%)</label><input type="number" id="vo2_sao2" placeholder="95" class="input-small"></div>
+                    <div class="input-item"><label>PaO₂ (mmHg)</label><input type="number" id="vo2_pao2" placeholder="80" class="input-small"></div>
+                </div>
+                <div style="font-weight:bold; font-size:13px; color:#555; margin-top:8px;">靜脈端</div>
+                <div class="input-row" style="margin-top:4px;">
+                    <div class="input-item"><label>SvO₂ (%)</label><input type="number" id="vo2_svo2" placeholder="68" class="input-small"></div>
+                    <div class="input-item"><label>PvO₂ (mmHg)</label><input type="number" id="vo2_pvo2" placeholder="40" class="input-small"></div>
+                </div>
+                <button onclick="calculateVO2()" class="btn" style="margin-top:15px; background:#7b1fa2;">計算結果</button>
+                <div id="vo2Result" class="result-panel" style="border-left-color:#7b1fa2;">
+                    <div class="result-line"><span>DO₂</span><b><span id="res-vo2-do2">--</span> mL/min</b></div>
+                    <div class="result-line"><span>VO₂</span><b><span id="res-vo2">--</span> mL/min</b></div>
+                    <div class="result-line"><span>DO₂:VO₂</span><b><span id="res-ratio">--</span></b></div>
+                    <div id="res-vo2-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                </div>
+            </div>
+
         </div>
+        </div>
+    </div>
+
+    <!-- DO2 概念 Modal -->
+    <div id="do2ConceptModal" class="overlay" onclick="closeMenu('do2ConceptModal')">
+        <div class="menu" onclick="event.stopPropagation()">
+            <h3 style="margin:0 0 12px;">🫀 DO₂ 臨床概念</h3>
+
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">VV ECMO</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    SaO₂ 偏低（80–90%）是常見現象，不代表要處理<br>
+                    → 只要 DO₂ 足夠、SvO₂ &gt; 66%、Lactate 正常就 OK
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size:13px; margin-top:8px;">
+                    <tr style="background:#f5f5f5;"><th style="padding:6px 10px; text-align:left; border-bottom:1px solid #ddd; color:#555;">問題</th><th style="padding:6px 10px; text-align:left; border-bottom:1px solid #ddd; color:#555;">處理</th></tr>
+                    <tr><td style="padding:6px 10px; border-bottom:1px solid #eee;">ECMO 流量不足</td><td style="padding:6px 10px; border-bottom:1px solid #eee;">↑ ECMO 轉速</td></tr>
+                    <tr><td style="padding:6px 10px; border-bottom:1px solid #eee;">Hb 不足</td><td style="padding:6px 10px; border-bottom:1px solid #eee;">輸血（Hct &gt; 30–40%）</td></tr>
+                    <tr><td style="padding:6px 10px;">SaO₂ 不足</td><td style="padding:6px 10px;">↑ Sweep gas / 呼吸器 FiO₂</td></tr>
+                </table>
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">VA ECMO</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    CO ≈ ECMO 流量，DO₂ 直接反映器官灌流<br>
+                    → 監測<b>右手橈動脈 A-line</b>（上半身氧合，防 Harlequin）
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size:13px; margin-top:8px;">
+                    <tr style="background:#f5f5f5;"><th style="padding:6px 10px; text-align:left; border-bottom:1px solid #ddd; color:#555;">問題</th><th style="padding:6px 10px; text-align:left; border-bottom:1px solid #ddd; color:#555;">處理</th></tr>
+                    <tr><td style="padding:6px 10px; border-bottom:1px solid #eee;">ECMO 流量不足</td><td style="padding:6px 10px; border-bottom:1px solid #eee;">↑ ECMO 轉速</td></tr>
+                    <tr><td style="padding:6px 10px; border-bottom:1px solid #eee;">Hb 不足</td><td style="padding:6px 10px; border-bottom:1px solid #eee;">輸血（Hct &gt; 30–40%）</td></tr>
+                    <tr><td style="padding:6px 10px;">上半身低氧</td><td style="padding:6px 10px;">考慮轉 VA-V ECMO</td></tr>
+                </table>
+            </div>
+
+            <button onclick="closeMenu('do2ConceptModal')" class="close-btn">關閉</button>
+        </div>
+    </div>
+
+    <!-- VO2 概念 Modal -->
+    <div id="vo2ConceptModal" class="overlay" onclick="closeMenu('vo2ConceptModal')">
+        <div class="menu" onclick="event.stopPropagation()">
+            <h3 style="margin:0 0 12px;">🫁 VO₂ / DO₂:VO₂ 臨床概念</h3>
+
+            <div style="font-size:13px; color:#444; line-height:1.8; margin-bottom:12px;">
+                <b>目標：</b>DO₂:VO₂ ≥ 3:1　　SvO₂ &gt; 66%<br>
+                &lt; 2:1 危險，組織開始無氧代謝，Lactate 通常已升
+            </div>
+
+            <div style="font-size:13px; color:#444; line-height:1.8; margin-bottom:12px;">
+                <b>VO₂ 升高原因：</b>發燒、躁動、感染
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">VV ECMO</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    SvO₂ 受 recirculation 影響<br>
+                    → 需綜合 Lactate、Hb、ECMO flow 判斷<br><br>
+                    <b>低血氧常見原因：</b>Recirculation、Oxygenator 效能下降、Pulmonary shunting、ECMO flow 不足<br><br>
+                    ECMO flow 應盡量提高佔 CO 的比例（參考目標約 60%）<br>
+                    → 但最終仍以 SaO₂ &gt; 80–90%、SvO₂ &gt; 66%、Lactate 趨勢綜合判斷
+                </div>
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">VA ECMO</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    SvO₂ 更具代表性<br>
+                    → 直接反映器官灌流是否足夠
+                </div>
+            </div>
+
+            <button onclick="closeMenu('vo2ConceptModal')" class="close-btn">關閉</button>
         </div>
     </div>
     
@@ -504,7 +632,7 @@
                 </div>
                 <div style="position:relative;">
                   <a href="https://docs.google.com/presentation/d/1OLAk6VCnBinwRldsjXEEUgIH973sfOYv/edit?usp=drive_link&ouid=114115089500126917808&rtpof=true&sd=true" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7; display:block;">食道球測量</a>
-                  <a href="https://drive.google.com/file/d/1-GFFxCkO0fef-ajfO5sECd-CNh6zITHu/view?usp=drive_link" target="_blank" onclick="event.stopPropagation();" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7; text-decoration:none;" title="跨肺驅動壓說明">⚠️</a>
+                  <a href="https://drive.google.com/file/d/14U3ijNF9eoPLIBRMqNdMHuiO4v6g3nFa/view?usp=drive_link" target="_blank" onclick="event.stopPropagation();" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7; text-decoration:none;" title="跨肺驅動壓說明">⚠️</a>
                 </div>
                 <a href="https://drive.google.com/file/d/1s8chRiyHAoo9fSKWGNuarWEGkshjcSxv/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">ECMO</a>
             </div>
@@ -902,6 +1030,52 @@
             document.getElementById('res-mp').innerText = mp;
             document.getElementById('res-mp-interp').innerText = interp;
             document.getElementById('mpResult').style.display = 'block';
+        }
+
+        function calculateDO2() {
+            const co   = parseFloat(document.getElementById('do2_co').value);
+            const hb   = parseFloat(document.getElementById('do2_hb').value);
+            const sao2 = parseFloat(document.getElementById('do2_sao2').value);
+            const pao2 = parseFloat(document.getElementById('do2_pao2').value);
+            if ([co, hb, sao2, pao2].some(isNaN)) { alert('請填入所有數值'); return; }
+            const cao2 = (1.34 * hb * sao2 / 100) + (0.003 * pao2);
+            const do2  = co * cao2 * 10;
+            const hbO2 = 1.34 * hb * (sao2 / 100) * co * 10;
+            document.getElementById('res-do2').innerText      = do2.toFixed(0);
+            document.getElementById('res-cao2').innerText     = cao2.toFixed(2);
+            document.getElementById('res-hb-carry').innerText = hbO2.toFixed(0);
+            let interp = '', color = '';
+            if (do2 >= 520)      { interp = '✅ 正常範圍（≥ 520 mL/min）';     color = '#1b5e20'; }
+            else if (do2 >= 400) { interp = '⚠️ 偏低，評估 ECMO 流量、Hb';    color = '#e65100'; }
+            else                 { interp = '🚨 DO₂ 嚴重不足，立即介入';        color = '#b71c1c'; }
+            const el = document.getElementById('res-do2-interp');
+            el.innerText = interp; el.style.color = color;
+            document.getElementById('do2Result').style.display = 'block';
+        }
+
+        function calculateVO2() {
+            const co   = parseFloat(document.getElementById('vo2_co').value);
+            const hb   = parseFloat(document.getElementById('vo2_hb').value);
+            const sao2 = parseFloat(document.getElementById('vo2_sao2').value);
+            const pao2 = parseFloat(document.getElementById('vo2_pao2').value);
+            const svo2 = parseFloat(document.getElementById('vo2_svo2').value);
+            const pvo2 = parseFloat(document.getElementById('vo2_pvo2').value);
+            if ([co, hb, sao2, pao2, svo2, pvo2].some(isNaN)) { alert('請填入所有數值'); return; }
+            const cao2  = (1.34 * hb * sao2 / 100) + (0.003 * pao2);
+            const cvo2  = (1.34 * hb * svo2 / 100) + (0.003 * pvo2);
+            const do2   = co * cao2 * 10;
+            const vo2   = co * (cao2 - cvo2) * 10;
+            const ratio = do2 / vo2;
+            document.getElementById('res-vo2-do2').innerText = do2.toFixed(0);
+            document.getElementById('res-vo2').innerText     = vo2.toFixed(0);
+            document.getElementById('res-ratio').innerText   = ratio.toFixed(2) + ':1';
+            let interp = '', color = '';
+            if (ratio >= 3)      { interp = '✅ 供氧充足（DO₂:VO₂ ≥ 3:1）';                      color = '#1b5e20'; }
+            else if (ratio >= 2) { interp = '⚠️ 邊界值（' + ratio.toFixed(2) + ':1），密切監測'; color = '#e65100'; }
+            else                 { interp = '🚨 DO₂:VO₂ < 2:1，危急！立即調整';                   color = '#b71c1c'; }
+            const el = document.getElementById('res-vo2-interp');
+            el.innerText = interp; el.style.color = color;
+            document.getElementById('vo2Result').style.display = 'block';
         }
     </script>
 
