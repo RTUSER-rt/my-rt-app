@@ -176,6 +176,8 @@
         <div id="advCalcBody" style="display:none; padding-top:5px;">
 <div style="padding-top:5px;">
 
+
+
             <!-- P/F Ratio -->
             <div class="card calc-container" style="border-top: 4px solid #fb8c00;">
                 <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
@@ -190,6 +192,33 @@
                 <div id="pfResult" class="result-panel" style="border-left-color:#fb8c00;">
                     <div class="result-line"><span>P/F Ratio:</span><b><span id="res-pf">--</span></b></div>
                     <div id="res-pf-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                </div>
+            </div>
+
+
+
+            <!-- A-a Gradient -->
+            <div class="card calc-container" style="border-top: 4px solid #0277bd;">
+                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+                    <div class="title">
+                        🫁 A-a Gradient
+                        <span onclick="openMenu('aaModal')" style="cursor:pointer; color:#0277bd; font-size:18px; margin-left:8px;">❗</span>
+                    </div>
+                    <span class="type">A-a = PAO₂ − PaO₂　　PAO₂ = (FiO₂ × 713) − (PaCO₂ ÷ 0.8)　　正常值 ≈ 2.5 + (0.21 × 年齡)</span>
+                </div>
+                <div class="input-row">
+                    <div class="input-item"><label>FiO₂ (%)</label><input type="number" id="aa_fio2" placeholder="21" class="input-small" inputmode="decimal"></div>
+                    <div class="input-item"><label>PaCO₂ (mmHg)</label><input type="number" id="aa_paco2" placeholder="40" class="input-small" inputmode="decimal"></div>
+                    <div class="input-item"><label>PaO₂ (mmHg)</label><input type="number" id="aa_pao2" placeholder="95" class="input-small" inputmode="decimal"></div>
+                    <div class="input-item"><label>年齡 (歲)</label><input type="number" id="aa_age" placeholder="50" class="input-small" inputmode="decimal"></div>
+                </div>
+                <button onclick="calculateAA()" class="btn" style="margin-top:15px; background:#0277bd;">計算結果</button>
+                <div id="aaResult" class="result-panel" style="border-left-color:#0277bd;">
+                    <div class="result-line"><span>PAO₂</span><b><span id="res-pao2-aa">--</span> mmHg</b></div>
+                    <div class="result-line"><span>A-a Gradient</span><b><span id="res-aa">--</span> mmHg</b></div>
+                    <div class="result-line"><span>正常上限（依年齡）</span><b><span id="res-aa-normal">--</span> mmHg</b></div>
+                    <div id="res-aa-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                    <div id="res-aa-cause" style="font-size:12px; color:#555; margin-top:8px; padding-top:8px; border-top:1px solid #ddd;"></div>
                 </div>
             </div>
 
@@ -439,135 +468,7 @@
                 </div>
             </div>
 
-            <!-- DO2 氧氣輸送量 -->
-            <div class="card calc-container" style="border-top: 4px solid #e53935;">
-                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-                    <div class="title">
-                        🫀 DO₂ 氧氣輸送量
-                        <span onclick="openMenu('do2ConceptModal')" style="cursor:pointer; color:#e53935; font-size:18px; margin-left:8px;">❗</span>
-                    </div>
-                    <span class="type">DO₂ = CO × CaO₂ × 10　　CaO₂ = (1.34 × Hb × SaO₂) + (0.003 × PaO₂)　　正常值：520–570 mL/min</span>
-                </div>
-                <div class="input-row">
-                    <div class="input-item"><label>CO (L/min)</label><input type="number" id="do2_co" placeholder="4.0" class="input-small" step="0.1" inputmode="decimal"></div>
-                    <div class="input-item"><label>Hb (g/dL)</label><input type="number" id="do2_hb" placeholder="12.0" class="input-small" step="0.1" inputmode="decimal"></div>
-                    <div class="input-item"><label>SaO₂ (%)</label><input type="number" id="do2_sao2" placeholder="95" class="input-small" inputmode="decimal"></div>
-                    <div class="input-item"><label>PaO₂ (mmHg)</label><input type="number" id="do2_pao2" placeholder="80" class="input-small" inputmode="decimal"></div>
-                </div>
-                <button onclick="calculateDO2()" class="btn" style="margin-top:15px; background:#e53935;">計算結果</button>
-                <div id="do2Result" class="result-panel" style="border-left-color:#e53935;">
-                    <div class="result-line"><span>DO₂</span><b><span id="res-do2">--</span> mL/min</b></div>
-                    <div class="result-line"><span>CaO₂</span><b><span id="res-cao2">--</span> mL/dL</b></div>
-                    <div class="result-line"><span>Hb 攜帶</span><b><span id="res-hb-carry">--</span> mL/min</b></div>
-                    <div id="res-do2-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
-                </div>
-            </div>
-
-            <!-- VO2 耗氧量 -->
-            <div class="card calc-container" style="border-top: 4px solid #7b1fa2;">
-                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-                    <div class="title">
-                        🫁 VO₂ 耗氧量 及 DO₂:VO₂
-                        <span onclick="openMenu('vo2ConceptModal')" style="cursor:pointer; color:#7b1fa2; font-size:18px; margin-left:8px;">❗</span>
-                    </div>
-                    <span class="type">VO₂ = CO × (CaO₂ − CvO₂) × 10　　目標：DO₂:VO₂ ≥ 3:1　　SvO₂ > 66%</span>
-                </div>
-                <div style="font-weight:bold; font-size:13px; color:#555; margin-top:12px;">動脈端</div>
-                <div class="input-row" style="margin-top:4px;">
-                    <div class="input-item"><label>CO (L/min)</label><input type="number" id="vo2_co" placeholder="4.0" class="input-small" step="0.1"></div>
-                    <div class="input-item"><label>Hb (g/dL)</label><input type="number" id="vo2_hb" placeholder="12.0" class="input-small" step="0.1"></div>
-                    <div class="input-item"><label>SaO₂ (%)</label><input type="number" id="vo2_sao2" placeholder="95" class="input-small"></div>
-                    <div class="input-item"><label>PaO₂ (mmHg)</label><input type="number" id="vo2_pao2" placeholder="80" class="input-small"></div>
-                </div>
-                <div style="font-weight:bold; font-size:13px; color:#555; margin-top:8px;">靜脈端</div>
-                <div class="input-row" style="margin-top:4px;">
-                    <div class="input-item"><label>SvO₂ (%)</label><input type="number" id="vo2_svo2" placeholder="68" class="input-small"></div>
-                    <div class="input-item"><label>PvO₂ (mmHg)</label><input type="number" id="vo2_pvo2" placeholder="40" class="input-small"></div>
-                </div>
-                <button onclick="calculateVO2()" class="btn" style="margin-top:15px; background:#7b1fa2;">計算結果</button>
-                <div id="vo2Result" class="result-panel" style="border-left-color:#7b1fa2;">
-                    <div class="result-line"><span>DO₂</span><b><span id="res-vo2-do2">--</span> mL/min</b></div>
-                    <div class="result-line"><span>VO₂</span><b><span id="res-vo2">--</span> mL/min</b></div>
-                    <div class="result-line"><span>DO₂:VO₂</span><b><span id="res-ratio">--</span></b></div>
-                    <div id="res-vo2-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
-                </div>
-            </div>
-
         </div>
-        </div>
-    </div>
-
-    <!-- DO2 概念 Modal -->
-    <div id="do2ConceptModal" class="overlay" onclick="closeMenu('do2ConceptModal')">
-        <div class="menu" onclick="event.stopPropagation()">
-            <h3 style="margin:0 0 12px;">🫀 DO₂ 臨床概念</h3>
-
-            <div style="margin-bottom:14px;">
-                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">VV ECMO</div>
-                <div style="font-size:13px; color:#444; line-height:1.8;">
-                    SaO₂ 偏低（80–90%）是常見現象，不代表要處理<br>
-                    → 只要 DO₂ 足夠、SvO₂ &gt; 66%、Lactate 正常就 OK
-                </div>
-                <table style="width:100%; border-collapse:collapse; font-size:13px; margin-top:8px;">
-                    <tr style="background:#f5f5f5;"><th style="padding:6px 10px; text-align:left; border-bottom:1px solid #ddd; color:#555;">問題</th><th style="padding:6px 10px; text-align:left; border-bottom:1px solid #ddd; color:#555;">處理</th></tr>
-                    <tr><td style="padding:6px 10px; border-bottom:1px solid #eee;">ECMO 流量不足</td><td style="padding:6px 10px; border-bottom:1px solid #eee;">↑ ECMO 轉速</td></tr>
-                    <tr><td style="padding:6px 10px; border-bottom:1px solid #eee;">Hb 不足</td><td style="padding:6px 10px; border-bottom:1px solid #eee;">輸血（Hct &gt; 30–40%）</td></tr>
-                    <tr><td style="padding:6px 10px;">SaO₂ 不足</td><td style="padding:6px 10px;">↑ Sweep gas / 呼吸器 FiO₂</td></tr>
-                </table>
-            </div>
-
-            <div style="margin-bottom:14px;">
-                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">VA ECMO</div>
-                <div style="font-size:13px; color:#444; line-height:1.8;">
-                    CO ≈ ECMO 流量，DO₂ 直接反映器官灌流<br>
-                    → 監測<b>右手橈動脈 A-line</b>（上半身氧合，防 Harlequin）
-                </div>
-                <table style="width:100%; border-collapse:collapse; font-size:13px; margin-top:8px;">
-                    <tr style="background:#f5f5f5;"><th style="padding:6px 10px; text-align:left; border-bottom:1px solid #ddd; color:#555;">問題</th><th style="padding:6px 10px; text-align:left; border-bottom:1px solid #ddd; color:#555;">處理</th></tr>
-                    <tr><td style="padding:6px 10px; border-bottom:1px solid #eee;">ECMO 流量不足</td><td style="padding:6px 10px; border-bottom:1px solid #eee;">↑ ECMO 轉速</td></tr>
-                    <tr><td style="padding:6px 10px; border-bottom:1px solid #eee;">Hb 不足</td><td style="padding:6px 10px; border-bottom:1px solid #eee;">輸血（Hct &gt; 30–40%）</td></tr>
-                    <tr><td style="padding:6px 10px;">上半身低氧</td><td style="padding:6px 10px;">考慮轉 VA-V ECMO</td></tr>
-                </table>
-            </div>
-
-            <button onclick="closeMenu('do2ConceptModal')" class="close-btn">關閉</button>
-        </div>
-    </div>
-
-    <!-- VO2 概念 Modal -->
-    <div id="vo2ConceptModal" class="overlay" onclick="closeMenu('vo2ConceptModal')">
-        <div class="menu" onclick="event.stopPropagation()">
-            <h3 style="margin:0 0 12px;">🫁 VO₂ / DO₂:VO₂ 臨床概念</h3>
-
-            <div style="font-size:13px; color:#444; line-height:1.8; margin-bottom:12px;">
-                <b>目標：</b>DO₂:VO₂ ≥ 3:1　　SvO₂ &gt; 66%<br>
-                &lt; 2:1 危險，組織開始無氧代謝，Lactate 通常已升
-            </div>
-
-            <div style="font-size:13px; color:#444; line-height:1.8; margin-bottom:12px;">
-                <b>VO₂ 升高原因：</b>發燒、躁動、感染
-            </div>
-
-            <div style="margin-bottom:14px;">
-                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">VV ECMO</div>
-                <div style="font-size:13px; color:#444; line-height:1.8;">
-                    SvO₂ 受 recirculation 影響<br>
-                    → 需綜合 Lactate、Hb、ECMO flow 判斷<br><br>
-                    <b>低血氧常見原因：</b>Recirculation、Oxygenator 效能下降、Pulmonary shunting、ECMO flow 不足<br><br>
-                    ECMO flow 應盡量提高佔 CO 的比例（參考目標約 60%）<br>
-                    → 但最終仍以 SaO₂ &gt; 80–90%、SvO₂ &gt; 66%、Lactate 趨勢綜合判斷
-                </div>
-            </div>
-
-            <div style="margin-bottom:14px;">
-                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">VA ECMO</div>
-                <div style="font-size:13px; color:#444; line-height:1.8;">
-                    SvO₂ 更具代表性<br>
-                    → 直接反映器官灌流是否足夠
-                </div>
-            </div>
-
-            <button onclick="closeMenu('vo2ConceptModal')" class="close-btn">關閉</button>
         </div>
     </div>
     
@@ -588,6 +489,10 @@
                 <div style="position:relative;">
                   <a href="https://drive.google.com/file/d/1FHUvUNXTZcanEjE1OTjG2fhEBCmLjPae/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#00838f; border-color:#B2DFDB; display:block;">MR850 溫度調整</a>
                   <span onclick="event.stopPropagation(); closeMenu('miscOverlay'); setTimeout(()=>openMenu('mr850Modal'),200);" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7;" title="MR850 溫度說明">⚠️</span>
+                </div>
+                <div style="position:relative;">
+                  <a href="https://drive.google.com/file/d/1HsEeseQ9FCsCt83RDf4Dzz-tuHF2qTUv/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#00838f; border-color:#B2DFDB; display:block;">吸藥指南</a>
+                  <span onclick="event.stopPropagation(); closeMenu('miscOverlay'); setTimeout(()=>openMenu('aerogenModal'),200);" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7;" title="Aerogen 使用提醒">⚠️</span>
                 </div>
             </div>
             <button onclick="closeMenu('miscOverlay')" class="close-btn">關閉</button>
@@ -616,10 +521,7 @@
                 <a href="https://drive.google.com/file/d/1dM2IHL01NVGdQ5xd41MRaW2jG5R3d5Ga/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">intel ASV</a>
                 <a href="https://drive.google.com/file/d/1fI-T-qgsM4TesZtNZVy3bc7Wk6abcKBc/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">ASV</a>
                 <a href="https://drive.google.com/file/d/1BmwcO72Q9eEELSqoPy0HRw1SwjM-sVKT/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">PV tool</a>
-                <div style="position:relative;">
-                  <a href="https://drive.google.com/file/d/1p5aamJVW-nHczcjh_a7qaJQ7K-kclhsp/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7; display:block;">40-40</a>
-                  <a href="https://drive.google.com/file/d/1CAdemvvMeubScnavA6XGRrarGD9-lLu8/view?usp=drive_link" target="_blank" onclick="event.stopPropagation();" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7; text-decoration:none;" title="40-40 說明">⚠️</a>
-                </div>
+                <a href="https://drive.google.com/file/d/1p5aamJVW-nHczcjh_a7qaJQ7K-kclhsp/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">40-40</a>
                 <a href="https://drive.google.com/file/d/1cFrYrbYfG6yj5UTCXFoUUZ25GmoA3RMd/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">PAV</a>
                 <div style="position:relative;">
                   <a href="https://drive.google.com/file/d/1FkIn0ORei7SYVCvYr8iTM2y3Hbsa6QoO/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7; display:block;">NO</a>
@@ -638,7 +540,6 @@
                   <a href="https://drive.google.com/file/d/1-GFFxCkO0fef-ajfO5sECd-CNh6zITHu/view?usp=drive_link" target="_blank" onclick="event.stopPropagation();" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7; text-decoration:none;" title="跨肺驅動壓說明">⚠️</a>
                 </div>
                 <a href="https://drive.google.com/file/d/1s8chRiyHAoo9fSKWGNuarWEGkshjcSxv/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">ECMO</a>
-                <a href="https://rtuser-rt.github.io/ARDS/" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">ARDS</a>
             </div>
             <button onclick="closeMenu('techOverlay')" class="close-btn">關閉</button>
         </div>
@@ -1036,50 +937,38 @@
             document.getElementById('mpResult').style.display = 'block';
         }
 
-        function calculateDO2() {
-            const co   = parseFloat(document.getElementById('do2_co').value);
-            const hb   = parseFloat(document.getElementById('do2_hb').value);
-            const sao2 = parseFloat(document.getElementById('do2_sao2').value);
-            const pao2 = parseFloat(document.getElementById('do2_pao2').value);
-            if ([co, hb, sao2, pao2].some(isNaN)) { alert('請填入所有數值'); return; }
-            const cao2 = (1.34 * hb * sao2 / 100) + (0.003 * pao2);
-            const do2  = co * cao2 * 10;
-            const hbO2 = 1.34 * hb * (sao2 / 100) * co * 10;
-            document.getElementById('res-do2').innerText      = do2.toFixed(0);
-            document.getElementById('res-cao2').innerText     = cao2.toFixed(2);
-            document.getElementById('res-hb-carry').innerText = hbO2.toFixed(0);
-            let interp = '', color = '';
-            if (do2 >= 520)      { interp = '✅ 正常範圍（≥ 520 mL/min）';     color = '#1b5e20'; }
-            else if (do2 >= 400) { interp = '⚠️ 偏低，評估 ECMO 流量、Hb';    color = '#e65100'; }
-            else                 { interp = '🚨 DO₂ 嚴重不足，立即介入';        color = '#b71c1c'; }
-            const el = document.getElementById('res-do2-interp');
+        function calculateAA() {
+            const fio2  = parseFloat(document.getElementById('aa_fio2').value);
+            const paco2 = parseFloat(document.getElementById('aa_paco2').value);
+            const pao2  = parseFloat(document.getElementById('aa_pao2').value);
+            const age   = parseFloat(document.getElementById('aa_age').value);
+            if ([fio2, paco2, pao2].some(isNaN)) { alert('請填入 FiO₂、PaCO₂、PaO₂'); return; }
+            const PAO2   = (fio2 / 100 * 713) - (paco2 / 0.8);
+            const aa     = PAO2 - pao2;
+            const normal = isNaN(age) ? null : 2.5 + (0.21 * age);
+            document.getElementById('res-pao2-aa').innerText  = PAO2.toFixed(1);
+            document.getElementById('res-aa').innerText       = aa.toFixed(1);
+            document.getElementById('res-aa-normal').innerText = normal ? normal.toFixed(1) : '請輸入年齡';
+            let interp = '', color = '', cause = '';
+            if (normal) {
+                if (aa <= normal) {
+                    interp = '✅ 正常 A-a Gradient'; color = '#1b5e20';
+                    cause  = '低血氧原因可能是肺外問題：\n• PaCO₂ ≤ 45 → Low FiO₂\n• PaCO₂ > 45 → Hypoventilation';
+                } else if (aa <= normal + 10) {
+                    interp = '⚠️ 輕度偏高'; color = '#e65100';
+                    cause  = '考慮早期 V/Q mismatch 或 Diffusion limitation';
+                } else {
+                    interp = '🚨 A-a Gradient 明顯升高'; color = '#b71c1c';
+                    cause  = '肺內問題：\n• 對 100% O₂ 有反應 → V/Q mismatch / Diffusion limitation\n• 對 100% O₂ 無反應 → Shunt（ARDS、肺不張）';
+                }
+            } else {
+                interp = aa > 15 ? '🚨 偏高（> 15 mmHg）' : '✅ 正常範圍';
+                color  = aa > 15 ? '#b71c1c' : '#1b5e20';
+            }
+            const el = document.getElementById('res-aa-interp');
             el.innerText = interp; el.style.color = color;
-            document.getElementById('do2Result').style.display = 'block';
-        }
-
-        function calculateVO2() {
-            const co   = parseFloat(document.getElementById('vo2_co').value);
-            const hb   = parseFloat(document.getElementById('vo2_hb').value);
-            const sao2 = parseFloat(document.getElementById('vo2_sao2').value);
-            const pao2 = parseFloat(document.getElementById('vo2_pao2').value);
-            const svo2 = parseFloat(document.getElementById('vo2_svo2').value);
-            const pvo2 = parseFloat(document.getElementById('vo2_pvo2').value);
-            if ([co, hb, sao2, pao2, svo2, pvo2].some(isNaN)) { alert('請填入所有數值'); return; }
-            const cao2  = (1.34 * hb * sao2 / 100) + (0.003 * pao2);
-            const cvo2  = (1.34 * hb * svo2 / 100) + (0.003 * pvo2);
-            const do2   = co * cao2 * 10;
-            const vo2   = co * (cao2 - cvo2) * 10;
-            const ratio = do2 / vo2;
-            document.getElementById('res-vo2-do2').innerText = do2.toFixed(0);
-            document.getElementById('res-vo2').innerText     = vo2.toFixed(0);
-            document.getElementById('res-ratio').innerText   = ratio.toFixed(2) + ':1';
-            let interp = '', color = '';
-            if (ratio >= 3)      { interp = '✅ 供氧充足（DO₂:VO₂ ≥ 3:1）';                      color = '#1b5e20'; }
-            else if (ratio >= 2) { interp = '⚠️ 邊界值（' + ratio.toFixed(2) + ':1），密切監測'; color = '#e65100'; }
-            else                 { interp = '🚨 DO₂:VO₂ < 2:1，危急！立即調整';                   color = '#b71c1c'; }
-            const el = document.getElementById('res-vo2-interp');
-            el.innerText = interp; el.style.color = color;
-            document.getElementById('vo2Result').style.display = 'block';
+            document.getElementById('res-aa-cause').innerText = cause;
+            document.getElementById('aaResult').style.display = 'block';
         }
     </script>
 
@@ -1391,6 +1280,77 @@
         </div>
     </div>
 
+    <!-- A-a Gradient Modal -->
+    <div id="aaModal" class="overlay" onclick="closeMenu('aaModal')">
+        <div class="menu" onclick="event.stopPropagation()" style="width:95%; max-width:680px; padding:18px; max-height:85vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <h3 style="margin:0;">🫁 A-a Gradient 臨床概念</h3>
+                <button onclick="closeMenu('aaModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
+            </div>
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">用途</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    判斷低血氧是<b>肺部本身問題</b>還是<b>肺外問題</b><br>
+                    正常值：≈ 2.5 + (0.21 × 年齡)　室內空氣下通常 &lt; 15 mmHg
+                </div>
+            </div>
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:8px;">判讀流程</div>
+                <div style="text-align:center; margin-bottom:6px;">
+                    <span style="display:inline-block; padding:6px 14px; border-radius:8px; background:#fff9c4; border:2px solid #f9a825; font-size:13px; font-weight:bold;">Hypoxemia</span>
+                </div>
+                <div style="text-align:center; color:#888; font-size:16px; line-height:1.2;">↓</div>
+                <div style="text-align:center; margin-bottom:6px;">
+                    <span style="display:inline-block; padding:6px 14px; border-radius:8px; background:#ede7f6; border:2px solid #7e57c2; font-size:13px; font-weight:bold;">A-a Gradient = PAO₂ − PaO₂</span>
+                </div>
+                <div style="text-align:center; color:#888; font-size:16px; line-height:1.2;">↓</div>
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                    <div style="flex:1; text-align:center;">
+                        <div style="display:inline-block; padding:6px 12px; border-radius:8px; background:#e8f5e9; border:2px solid #43a047; font-size:13px; font-weight:bold; color:#1b5e20;">正常 A-a</div>
+                        <div style="font-size:11px; color:#888; margin:4px 0;">肺外問題</div>
+                        <div style="color:#888; font-size:16px;">↓</div>
+                        <div style="display:inline-block; padding:4px 10px; border-radius:8px; background:#fff9c4; border:2px solid #f9a825; font-size:12px; font-weight:bold;">PaCO₂</div>
+                        <div style="display:flex; gap:4px; margin-top:6px; justify-content:center;">
+                            <div style="text-align:center;">
+                                <div style="font-size:11px; color:#888;">≤ 45</div>
+                                <div style="display:inline-block; padding:4px 6px; border-radius:6px; background:#fff9c4; border:1px solid #f9a825; font-size:11px;">Low FiO₂</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:11px; color:#888;">&gt; 45</div>
+                                <div style="display:inline-block; padding:4px 6px; border-radius:6px; background:#fff9c4; border:1px solid #f9a825; font-size:11px;">Hypoventilation</div>
+                            </div>
+                        </div>
+                        <div style="font-size:11px; color:#43a047; margin-top:6px;">↑ O₂ 反應良好</div>
+                    </div>
+                    <div style="flex:1; text-align:center;">
+                        <div style="display:inline-block; padding:6px 12px; border-radius:8px; background:#ffcdd2; border:2px solid #e53935; font-size:13px; font-weight:bold; color:#b71c1c;">偏高 A-a</div>
+                        <div style="font-size:11px; color:#888; margin:4px 0;">肺內問題</div>
+                        <div style="color:#888; font-size:16px;">↓</div>
+                        <div style="display:inline-block; padding:4px 10px; border-radius:8px; background:#fff9c4; border:2px solid #f9a825; font-size:12px;">100% O₂ 反應？</div>
+                        <div style="display:flex; gap:4px; margin-top:6px; justify-content:center;">
+                            <div style="text-align:center;">
+                                <div style="font-size:11px; color:#888;">有反應</div>
+                                <div style="display:inline-block; padding:4px 6px; border-radius:6px; background:#fff9c4; border:1px solid #f9a825; font-size:11px;">V/Q mismatch<br>Diffusion ↓</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:11px; color:#888;">無反應</div>
+                                <div style="display:inline-block; padding:4px 6px; border-radius:6px; background:#ffcdd2; border:1px solid #e53935; font-size:11px; color:#b71c1c; font-weight:bold;">Shunt</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">臨床提醒</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    FiO₂ 越高，正常 A-a gradient 也越大<br>
+                    → 建議在室內空氣（FiO₂ 21%）下判讀最準確
+                </div>
+            </div>
+            <button onclick="closeMenu('aaModal')" class="close-btn">關閉</button>
+        </div>
+    </div>
+
     <!-- iNO 臨床警語 Modal -->
     <div id="inoWarningModal" class="overlay" onclick="closeMenu('inoWarningModal')">
         <div class="menu" onclick="event.stopPropagation()" style="width:95%; max-width:560px; padding:18px; max-height:92vh; overflow-y:auto;">
@@ -1520,7 +1480,7 @@
                 <a onclick="event.preventDefault(); closeMenu('pedsOverlay'); setTimeout(()=>openMenu('pedsImvModal'),200);" href="#" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4;">IMV 管路選擇</a>
                 <a onclick="event.preventDefault(); closeMenu('pedsOverlay'); setTimeout(()=>openMenu('pedsNippvModal'),200);" href="#" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4;">NIPPV 鼻導管選擇</a>
                 <div style="position:relative;">
-                  <a href="https://drive.google.com/file/d/1-1aCzUFa0md0t_43Aj0EGzBjbZtsmwjB/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4; display:block;">AirVO2 鼻導管選擇</a>
+                  <a href="https://drive.google.com/file/d/1-1aCzUFa0md0t_43Aj0EGzBjbZtsmwjB/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4; display:block;">HFNC 鼻導管選擇</a>
                   <span onclick="event.stopPropagation(); closeMenu('pedsOverlay'); setTimeout(()=>openMenu('hfncCannulaNoteModal'),200);" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7;" title="備註">⚠️</span>
                 </div>
                 <a href="https://drive.google.com/file/d/12gIpyvOlJj4gKPmdJJbpqmf0aBMNnj0H/view?usp=drivesdk" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4;">新生兒常見呼吸器操作與故障排除 1</a>
@@ -1710,14 +1670,13 @@
     <div id="hfncCannulaModal" class="overlay" onclick="closeMenu('hfncCannulaModal')">
         <div class="menu" onclick="event.stopPropagation()" style="width:95%; max-width:700px; padding:18px; max-height:92vh; overflow-y:auto;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-                <h3 style="margin:0;">💨 AirVO2 鼻導管選擇</h3>
+                <h3 style="margin:0;">💨 HFNC 鼻導管選擇</h3>
                 <button onclick="closeMenu('hfncCannulaModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
             </div>
             <img src="data:image/webp;base64,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" style="width:100%; border-radius:8px; display:block;">
             <div style="margin-top:12px; background:#FFF8E1; border-left:4px solid #F9A825; border-radius:8px; padding:10px 14px; font-size:13px; color:#4E342E; line-height:1.8;">
                 ⚠️ <b>AirVO 2</b> 限用 <b>&gt; 3 kg</b> 病人<br>
-                ⚠️ <b>Nasal Prong</b> 限用 <b>L🐙</b> 以上尺寸<br>
-                ⚠️ <b>XXL🐬</b> 要用<b>成人模式</b>
+                ⚠️ <b>Nasal Prong</b> 限用 <b>L 以上</b>尺寸
             </div>
             <button onclick="closeMenu('hfncCannulaModal')" class="close-btn" style="margin-top:16px;">關閉</button>
         </div>
@@ -1747,13 +1706,12 @@
     <div id="hfncCannulaNoteModal" class="overlay" onclick="closeMenu('hfncCannulaNoteModal')">
         <div class="menu" onclick="event.stopPropagation()" style="width:95%; max-width:500px; padding:18px;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-                <h3 style="margin:0;">⚠️ AirVO2 鼻導管備註</h3>
+                <h3 style="margin:0;">⚠️ HFNC 鼻導管備註</h3>
                 <button onclick="closeMenu('hfncCannulaNoteModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
             </div>
             <div style="background:#FFF8E1; border-left:4px solid #F9A825; border-radius:8px; padding:12px 14px; font-size:13px; color:#4E342E; line-height:1.9;">
                 ⚠️ <b>AirVO 2</b> 限用 <b>&gt; 3 kg</b> 病人<br>
-                ⚠️ <b>Nasal Prong</b> 限用 <b>L🐙</b> 以上尺寸<br>
-                ⚠️ <b>XXL🐬</b> 要用<b>成人模式</b>
+                ⚠️ <b>Nasal Prong</b> 限用 <b>L 以上</b>尺寸
             </div>
             <button onclick="closeMenu('hfncCannulaNoteModal')" class="close-btn" style="margin-top:16px;">關閉</button>
         </div>
@@ -1860,6 +1818,26 @@
             </div>
             <img src="data:image/webp;base64,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" style="width:100%; border-radius:8px; display:block;">
             <button onclick="closeMenu('vestSizeModal')" class="close-btn" style="margin-top:16px;">關閉</button>
+        </div>
+    </div>
+
+    <!-- Aerogen Modal -->
+    <div id="aerogenModal" class="overlay" onclick="closeMenu('aerogenModal')">
+        <div class="menu" onclick="event.stopPropagation()" style="width:95%; max-width:560px; padding:18px; max-height:92vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <h3 style="margin:0;">💊 Aerogen 使用提醒</h3>
+                <button onclick="closeMenu('aerogenModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
+            </div>
+            <div style="background:#fffde7; border:1.5px solid #ffe082; border-radius:10px; padding:14px; font-size:14px; color:#444; line-height:1.8;">
+                <b>使用後清潔：</b><br>
+                Aerogen 使用後可加入 <b>1–2 滴 N/S</b> 進行清潔<br>
+                原理：帶有電荷的溶液可將殘留在<b>網篩</b>中的藥物繼續霧化，達到清潔效果
+            </div>
+            <div style="background:#fffde7; border:1.5px solid #ffe082; border-radius:10px; padding:14px; font-size:14px; color:#444; line-height:1.8; margin-top:10px;">
+                <b>內建 Aerogen 功能機型（不須控制器）：</b><br>
+                Servo-<b>U</b>　／　Servo-<b>N</b>　／　Servo-<b>Air</b>　／　Servo-<b>C</b>
+            </div>
+            <button onclick="closeMenu('aerogenModal')" class="close-btn" style="margin-top:16px;">關閉</button>
         </div>
     </div>
 
