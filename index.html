@@ -356,28 +356,6 @@
                 </div>
             </div>
 
-            <!-- Anion Gap -->
-            <div class="card calc-container" style="border-top: 4px solid #00796b;">
-                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-                    <div class="title">🧪 Anion Gap <span onclick="openMenu('mudpilesModal')" style="cursor:pointer; color:#00796b; font-size:18px; margin-left:8px;">❗</span></div>
-                    <span class="type" style="display:block;">Na⁺ − (Cl⁻ + HCO₃⁻)　校正：AG + 2.5 × (4 − Alb)</span>
-                </div>
-                <div class="input-row">
-                    <div class="input-item"><label>Na⁺ (mEq/L)</label><input type="number" id="ag_na" placeholder="" class="input-small"></div>
-                    <div class="input-item"><label>Cl⁻ (mEq/L)</label><input type="number" id="ag_cl" placeholder="" class="input-small"></div>
-                    <div class="input-item"><label>HCO₃⁻ (mEq/L)</label><input type="number" id="ag_hco3" placeholder="" class="input-small"></div>
-                </div>
-                <div class="input-row" style="margin-top:5px;">
-                    <div class="input-item"><label>Albumin (g/dL)<br><span style="font-size:10px; color:#aaa;">選填，用於校正</span></label><input type="number" id="ag_alb" placeholder="正常值 4.0" class="input-small"></div>
-                </div>
-                <button onclick="calculateAG()" class="btn" style="margin-top:15px; background:#00796b;">計算結果</button>
-                <div id="agResult" class="result-panel" style="border-left-color:#00796b;">
-                    <div class="result-line"><span>Anion Gap:</span><b><span id="res-ag">--</span> mEq/L</b></div>
-                    <div class="result-line" id="res-ag-corr-line"><span>校正 AG (corrected):</span><b><span id="res-ag-corr">--</span> mEq/L</b></div>
-                    <div id="res-ag-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
-                </div>
-            </div>
-
             <!-- Compliance & Resistance -->
             <div class="card calc-container" style="border-top: 4px solid #1565c0;">
                 <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
@@ -429,24 +407,112 @@
                 </div>
             </div>
 
-            <!-- ABG 判讀 -->
-            <div class="card calc-container" style="border-top: 4px solid #5c6bc0;">
+            <!-- Winter's Formula -->
+            <div class="card calc-container" style="border-top: 4px solid #00796b;">
                 <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
-                    <div class="title"><img src="data:image/webp;base64,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" style="width:1.4em; height:1.4em; vertical-align:middle; margin-right:4px;"> ABG 判讀</div>
-                    <span class="type">酸鹼判斷 + 代償計算 + 預期補償公式</span>
+                    <div class="title">🧪 Anion Gap <span onclick="openMenu('mudpilesModal')" style="cursor:pointer; color:#00796b; font-size:18px; margin-left:8px;">❗</span></div>
+                    <span class="type" style="display:block;">Na⁺ − (Cl⁻ + HCO₃⁻)　校正：AG + 2.5 × (4 − Alb)</span>
                 </div>
                 <div class="input-row">
-                    <div class="input-item"><label>pH</label><input type="number" id="abg_ph" placeholder="7.35–7.45" step="0.01" class="input-small"></div>
-                    <div class="input-item"><label>PaCO₂</label><input type="number" id="abg_paco2" placeholder="mmHg" class="input-small"></div>
-                    <div class="input-item"><label>HCO₃⁻</label><input type="number" id="abg_hco3" placeholder="mEq/L" class="input-small"></div>
+                    <div class="input-item"><label>Na⁺ (mEq/L)</label><input type="number" id="old_ag_na" placeholder="" class="input-small"></div>
+                    <div class="input-item"><label>Cl⁻ (mEq/L)</label><input type="number" id="old_ag_cl" placeholder="" class="input-small"></div>
+                    <div class="input-item"><label>HCO₃⁻ (mEq/L)</label><input type="number" id="old_ag_hco3" placeholder="" class="input-small"></div>
                 </div>
-                <button onclick="calculateABG()" class="btn" style="margin-top:15px; background:#5c6bc0;">判讀結果</button>
-                <div id="abgResult" class="result-panel" style="border-left-color:#5c6bc0; display:none;">
-                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;"><span>主要異常</span><b><span id="res-abg-primary">--</span></b></div>
-                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;"><span>代償狀態</span><b><span id="res-abg-comp">--</span></b></div>
-                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;" id="abg-expected-line"><span>預期補償值</span><b><span id="res-abg-expected">--</span></b></div>
-                    <div class="result-line" style="flex-direction:column; align-items:flex-start; gap:2px;" id="abg-formula-line"><span style="font-size:11px; color:#999;"><span id="res-abg-formula"></span></span></div>
-                    <div id="res-abg-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                <div class="input-row" style="margin-top:5px;">
+                    <div class="input-item"><label>Albumin (g/dL)<br><span style="font-size:10px; color:#aaa;">選填，用於校正</span></label><input type="number" id="old_ag_alb" placeholder="正常值 4.0" class="input-small"></div>
+                </div>
+                <button onclick="calculateOldAG()" class="btn" style="margin-top:15px; background:#00796b;">計算結果</button>
+                <div id="oldAgResult" class="result-panel" style="border-left-color:#00796b;">
+                    <div class="result-line"><span>Anion Gap:</span><b><span id="res-old-ag">--</span> mEq/L</b></div>
+                    <div class="result-line" id="res-old-ag-corr-line"><span>校正 AG (corrected):</span><b><span id="res-old-ag-corr">--</span> mEq/L</b></div>
+                    <div id="res-old-ag-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                </div>
+            </div>
+
+            <!-- 代謝性鹼中毒呼吸代償 -->
+            <div class="card calc-container" style="border-top: 4px solid #0277bd;">
+                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+                    <div class="title">🧮 代謝性鹼中毒呼吸代償</div>
+                    <span class="type">預期 PaCO₂ = 0.7 × HCO₃⁻ + 21 ± 2</span>
+                </div>
+                <div class="input-row">
+                    <div class="input-item"><label>HCO₃⁻ (mEq/L)</label><input type="number" id="malk_hco3" placeholder="24" class="input-small" inputmode="decimal"></div>
+                    <div class="input-item"><label>實測 PaCO₂ (mmHg)</label><input type="number" id="malk_paco2" placeholder="40" class="input-small" inputmode="decimal"></div>
+                </div>
+                <button onclick="calculateMAlk()" class="btn" style="margin-top:15px; background:#0277bd;">計算結果</button>
+                <div id="malkResult" class="result-panel" style="border-left-color:#0277bd; display:none;">
+                    <div class="result-line"><span>預期 PaCO₂ 範圍</span><b><span id="res-malk-range">--</span> mmHg</b></div>
+                    <div id="res-malk-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                </div>
+            </div>
+
+            <!-- Winter's Formula -->
+            <div class="card calc-container" style="border-top: 4px solid #00695c;">
+                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+                    <div class="title">
+                        🧮 Winter's Formula
+                        <span onclick="openMenu('wintersModal')" style="cursor:pointer; color:#00695c; font-size:18px; margin-left:8px;">❗</span>
+                    </div>
+                    <span class="type">代謝性酸中毒時，預測呼吸代償的 PaCO₂　　PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2</span>
+                </div>
+                <div class="input-row">
+                    <div class="input-item"><label>HCO₃⁻ (mEq/L)</label><input type="number" id="winters_hco3" placeholder="24" class="input-small" inputmode="decimal"></div>
+                </div>
+                <button onclick="calculateWinters()" class="btn" style="margin-top:15px; background:#00695c;">計算結果</button>
+                <div id="wintersResult" class="result-panel" style="border-left-color:#00695c; display:none;">
+                    <div class="result-line"><span>預期 PaCO₂ 範圍</span><b><span id="res-winters-range">--</span> mmHg</b></div>
+                    <div id="res-winters-interp" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                </div>
+            </div>
+
+            <!-- AG 完整判讀 -->
+            <div class="card calc-container" style="border-top: 4px solid #00695c;">
+                <div class="info" style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+                    <div class="title">🧪 代謝性酸中毒完整判讀
+                        <span onclick="openMenu('acidosisModal')" style="cursor:pointer; color:#00695c; font-size:18px; margin-left:8px;">❗</span>
+                    </div>
+                    <span class="type">校正 AG → Winter's 呼吸代償 → Delta Gap（高 AG 適用）</span>
+                </div>
+
+                <div style="font-size:12px; color:#888; font-weight:bold; margin:12px 0 4px;">基本電解質</div>
+                <div class="input-row">
+                    <div class="input-item"><label>Na⁺ (mEq/L)</label><input type="number" id="ag_na" placeholder="140" class="input-small" inputmode="decimal"></div>
+                    <div class="input-item"><label>Cl⁻ (mEq/L)</label><input type="number" id="ag_cl" placeholder="104" class="input-small" inputmode="decimal"></div>
+                    <div class="input-item"><label>HCO₃⁻ (mEq/L)</label><input type="number" id="ag_hco3" placeholder="24" class="input-small" inputmode="decimal"></div>
+                </div>
+                <div style="font-size:12px; color:#888; font-weight:bold; margin:10px 0 4px;">白蛋白 / 動脈血氣</div>
+                <div class="input-row">
+                    <div class="input-item"><label>Albumin (g/dL)</label><input type="number" id="ag_alb" placeholder="4.0" class="input-small" inputmode="decimal"></div>
+                    <div class="input-item"><label>實測 PaCO₂ (mmHg)</label><input type="number" id="ag_paco2" placeholder="40" class="input-small" inputmode="decimal"></div>
+                </div>
+
+                <button onclick="calculateAG()" class="btn" style="margin-top:15px; background:#00695c;">完整判讀</button>
+
+                <div id="agResult" style="display:none; margin-top:14px;">
+                    <!-- Step 1 -->
+                    <div style="background:#f3e5f5; border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+                        <div style="font-size:11px; font-weight:bold; color:#888; margin-bottom:6px; letter-spacing:0.5px;">STEP 1 ── 校正陰離子間隙</div>
+                        <div style="font-size:14px; font-weight:bold; color:#333;" id="ag-s1-ag">AG = --</div>
+                        <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:6px;" id="ag-s1-cag">校正 AG = --</div>
+                        <div style="font-size:13px; color:#555;" id="ag-s1-interp">--</div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div style="background:#e3f2fd; border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+                        <div style="font-size:11px; font-weight:bold; color:#888; margin-bottom:6px; letter-spacing:0.5px;">STEP 2 ── Winter's 呼吸代償</div>
+                        <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:6px;" id="ag-s2-range">預期 PaCO₂ = --</div>
+                        <div style="font-size:13px; color:#555;" id="ag-s2-interp">--</div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div id="ag-s3-block" style="background:#fff3e0; border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+                        <div style="font-size:11px; font-weight:bold; color:#888; margin-bottom:6px; letter-spacing:0.5px;">STEP 3 ── Delta Gap（高 AG 限定）</div>
+                        <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:6px;" id="ag-s3-ratio">ΔAG / ΔHCO₃⁻ = --</div>
+                        <div style="font-size:13px; color:#555;" id="ag-s3-interp">--</div>
+                    </div>
+                    <!-- Final -->
+                    <div style="background:#e8f5e9; border:1.5px solid #43a047; border-radius:10px; padding:12px 14px;">
+                        <div style="font-size:13px; font-weight:bold; color:#2e7d32; margin-bottom:6px;">📋 綜合判讀</div>
+                        <div style="font-size:13px; color:#333; line-height:1.8;" id="ag-final">--</div>
+                    </div>
                 </div>
             </div>
 
@@ -572,7 +638,7 @@
         <div class="menu" onclick="event.stopPropagation()">
             <h3>📟 榮總作業須知</h3>
             <div class="menu-list">
-                <a href="https://docs.google.com/document/d/1kpI6R51GMvFO6mV1rkq0rGkFDiVwCWVxwWKhknkx2pw/edit" target="_blank" class="menu-btn">工作守則</a>
+                <a href="https://docs.google.com/document/d/1lPZdxaWGfJBnmI4AlXYPwgmiJIHcyohfIga86UVjsrE/edit?usp=sharing" target="_blank" class="menu-btn">工作守則</a>
                 <a href="https://docs.google.com/document/d/1J3NbT6AoW_99JvtHbgdSZPOhi5E68w51Y_WUYatTx_I/edit" target="_blank" class="menu-btn">業務指引</a>
                 <a href="https://drive.google.com/file/d/1p2DfHIp-ji7GuGyJh7R3Rx1ltujV_w8D/view?usp=drive_link" target="_blank" class="menu-btn">PGY</a>
                 <a href="https://vacation.emicro.tech/login" target="_blank" class="menu-btn">預約長假</a>
@@ -766,26 +832,26 @@
         }
 
         // Anion Gap
-        function calculateAG() {
-            const na = parseFloat(document.getElementById('ag_na').value);
-            const cl = parseFloat(document.getElementById('ag_cl').value);
-            const hco3 = parseFloat(document.getElementById('ag_hco3').value);
-            const alb = parseFloat(document.getElementById('ag_alb').value);
+        function calculateOldAG() {
+            const na = parseFloat(document.getElementById('old_ag_na').value);
+            const cl = parseFloat(document.getElementById('old_ag_cl').value);
+            const hco3 = parseFloat(document.getElementById('old_ag_hco3').value);
+            const alb = parseFloat(document.getElementById('old_ag_alb').value);
             if (isNaN(na) || isNaN(cl) || isNaN(hco3)) return;
             const ag = (na - cl - hco3).toFixed(1);
             let interp = ag <= 12 ? '✅ 正常 (≤ 12)' : ag <= 20 ? '⚠️ 輕度升高 (12–20)' : '🚨 顯著升高 (> 20)，考慮 MUDPILES';
-            document.getElementById('res-ag').innerText = ag;
-            const corrLine = document.getElementById('res-ag-corr-line');
+            document.getElementById('res-old-ag').innerText = ag;
+            const corrLine = document.getElementById('res-old-ag-corr-line');
             if (!isNaN(alb)) {
                 const agCorr = (parseFloat(ag) + 2.5 * (4 - alb)).toFixed(1);
-                document.getElementById('res-ag-corr').innerText = agCorr;
+                document.getElementById('res-old-ag-corr').innerText = agCorr;
                 corrLine.style.display = 'flex';
                 if (parseFloat(agCorr) > 12 && parseFloat(ag) <= 12) interp = '⚠️ 校正後 AG 升高，注意低白蛋白掩蓋';
             } else {
                 corrLine.style.display = 'none';
             }
-            document.getElementById('res-ag-interp').innerText = interp;
-            document.getElementById('agResult').style.display = 'block';
+            document.getElementById('res-old-ag-interp').innerText = interp;
+            document.getElementById('oldAgResult').style.display = 'block';
         }
 
         // Compliance & Resistance
@@ -934,6 +1000,110 @@
         }
 
         // Mechanical Power (Gattinoni 2016 simplified)
+        function calculateAG() {
+            const na    = parseFloat(document.getElementById('ag_na').value);
+            const cl    = parseFloat(document.getElementById('ag_cl').value);
+            const hco3  = parseFloat(document.getElementById('ag_hco3').value);
+            const alb   = parseFloat(document.getElementById('ag_alb').value);
+            const paco2 = parseFloat(document.getElementById('ag_paco2').value);
+            if ([na, cl, hco3].some(isNaN)) { alert('請填入 Na⁺、Cl⁻、HCO₃⁻'); return; }
+
+            // Step 1
+            const ag  = na - cl - hco3;
+            const cag = isNaN(alb) ? ag : ag + 2.5 * (4 - alb);
+            const highAG = cag >= 12;
+            document.getElementById('ag-s1-ag').innerText  = 'AG = ' + ag.toFixed(1) + ' mEq/L';
+            document.getElementById('ag-s1-cag').innerText = isNaN(alb) ? '（未輸入白蛋白，未校正）' : '校正 AG = ' + cag.toFixed(1) + ' mEq/L';
+            document.getElementById('ag-s1-interp').innerHTML = highAG
+                ? '<b style="color:#c62828;">高 AG ≥ 12</b>　高 AG 代謝性酸中毒（乳酸、酮酸、AKI、毒物等）'
+                : '<b style="color:#1565c0;">正常 AG &lt; 12</b>　正常 AG 代謝性酸中毒（腸胃道 HCO₃⁻ 流失、RTA、早期 AKI）';
+
+            // Step 2
+            const low  = 1.5 * hco3 + 8 - 2;
+            const high = 1.5 * hco3 + 8 + 2;
+            document.getElementById('ag-s2-range').innerText = '預期 PaCO₂ = ' + low.toFixed(1) + ' – ' + high.toFixed(1) + ' mmHg';
+            let s2text = '', s2type = '';
+            if (isNaN(paco2)) {
+                s2text = '請輸入實測 PaCO₂ 以判讀呼吸代償'; s2type = 'pending';
+            } else if (paco2 >= low && paco2 <= high) {
+                s2text = '<b style="color:#2e7d32;">代償適當</b>　實測 PaCO₂ 在預期範圍內 → 單純代謝性酸中毒'; s2type = 'ok';
+            } else if (paco2 > high) {
+                s2text = '<b style="color:#c62828;">合併呼吸性酸中毒</b>　實測 PaCO₂ 高於預期上限 → 呼吸代償不足'; s2type = 'resp_acid';
+            } else {
+                s2text = '<b style="color:#e65100;">合併呼吸性鹼中毒</b>　實測 PaCO₂ 低於預期下限 → 過度呼吸代償'; s2type = 'resp_alk';
+            }
+            document.getElementById('ag-s2-interp').innerHTML = s2text;
+
+            // Step 3
+            const s3block = document.getElementById('ag-s3-block');
+            if (!highAG) {
+                s3block.style.opacity = '0.4';
+                document.getElementById('ag-s3-ratio').innerText  = '（不適用：AG 正常）';
+                document.getElementById('ag-s3-interp').innerText = 'Delta gap 僅用於高 AG 代謝性酸中毒';
+            } else {
+                s3block.style.opacity = '1';
+                const deltaAG   = cag - 12;
+                const deltaHCO3 = 24 - hco3;
+                const ratio = deltaHCO3 === 0 ? 999 : deltaAG / deltaHCO3;
+                document.getElementById('ag-s3-ratio').innerText = 'ΔAG / ΔHCO₃⁻ = ' + ratio.toFixed(2);
+                let s3text = '';
+                if (ratio < 0.4)      s3text = '<b style="color:#c62828;">比值 &lt; 0.4</b>　合併正常 AG 代謝性酸中毒（HCO₃⁻ 下降幅度大於 AG 上升）';
+                else if (ratio <= 2)  s3text = '<b style="color:#2e7d32;">比值 0.4–2</b>　單純高 AG 代謝性酸中毒（代償比例正常）';
+                else                  s3text = '<b style="color:#e65100;">比值 &gt; 2</b>　合併代謝性鹼中毒（HCO₃⁻ 下降幅度小於預期）';
+                document.getElementById('ag-s3-interp').innerHTML = s3text;
+            }
+
+            // Final
+            let finals = [];
+            finals.push(highAG ? '高 AG 代謝性酸中毒' : '正常 AG 代謝性酸中毒');
+            if (!isNaN(paco2)) {
+                if (s2type === 'resp_acid') finals.push('合併呼吸性酸中毒');
+                if (s2type === 'resp_alk')  finals.push('合併呼吸性鹼中毒');
+            }
+            if (highAG) {
+                const deltaAG   = cag - 12;
+                const deltaHCO3 = 24 - hco3;
+                const ratio = deltaHCO3 === 0 ? 999 : deltaAG / deltaHCO3;
+                if (ratio < 0.4) finals.push('合併正常 AG 代謝性酸中毒');
+                if (ratio > 2)   finals.push('合併代謝性鹼中毒');
+            }
+            document.getElementById('ag-final').innerHTML = finals.map((f, i) => (i+1) + '. ' + f).join('<br>');
+            document.getElementById('agResult').style.display = 'block';
+        }
+
+        function calculateMAlk() {
+            const hco3  = parseFloat(document.getElementById('malk_hco3').value);
+            const paco2 = parseFloat(document.getElementById('malk_paco2').value);
+            if (isNaN(hco3)) { alert('請輸入 HCO₃⁻ 數值'); return; }
+            const low  = (0.7 * hco3 + 21 - 2).toFixed(1);
+            const high = (0.7 * hco3 + 21 + 2).toFixed(1);
+            document.getElementById('res-malk-range').innerText = low + ' – ' + high;
+            let interp = '', color = '';
+            if (isNaN(paco2)) {
+                interp = '請輸入實測 PaCO₂ 以判讀代償狀態'; color = '#888';
+            } else if (paco2 >= parseFloat(low) && paco2 <= parseFloat(high)) {
+                interp = '✅ 代償適當　單純代謝性鹼中毒'; color = '#2e7d32';
+            } else if (paco2 > parseFloat(high)) {
+                interp = '🚨 合併呼吸性酸中毒　PaCO₂ 高於預期上限'; color = '#c62828';
+            } else {
+                interp = '⚠️ 合併呼吸性鹼中毒　PaCO₂ 低於預期下限'; color = '#e65100';
+            }
+            const el = document.getElementById('res-malk-interp');
+            el.innerText = interp; el.style.color = color;
+            document.getElementById('malkResult').style.display = 'block';
+        }
+
+        function calculateWinters() {
+            const hco3 = parseFloat(document.getElementById('winters_hco3').value);
+            if (isNaN(hco3)) { alert('請輸入 HCO₃⁻ 數值'); return; }
+            const low  = (1.5 * hco3 + 8 - 2).toFixed(1);
+            const high = (1.5 * hco3 + 8 + 2).toFixed(1);
+            document.getElementById('res-winters-range').innerText = low + ' – ' + high;
+            document.getElementById('res-winters-interp').innerText = '若實測 PaCO₂ 在此範圍內 → 單純代謝性酸中毒（代償適當）';
+            document.getElementById('res-winters-interp').style.color = '#00695c';
+            document.getElementById('wintersResult').style.display = 'block';
+        }
+
         function calculateMP() {
             const rr = parseFloat(document.getElementById('mp_rr').value);
             const vt = parseFloat(document.getElementById('mp_vt').value);
@@ -1288,6 +1458,142 @@
 <text font-family="sans-serif" font-size="10" x="660" y="778" text-anchor="end" fill="#aaa">來源：NUEM Blog — Basic Capnography Interpretation (2021)</text>
 </svg>
             <button onclick="closeMenu('capnoModal')" class="close-btn" style="margin-top:15px;">關閉</button>
+        </div>
+    </div>
+
+    <!-- 代謝性酸中毒完整判讀 Modal -->
+    <div id="acidosisModal" class="overlay" onclick="closeMenu('acidosisModal')">
+        <div class="menu" onclick="event.stopPropagation()" style="width:95%; max-width:680px; padding:18px; max-height:92vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <h3 style="margin:0;">🧪 代謝性酸中毒判讀說明</h3>
+                <button onclick="closeMenu('acidosisModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
+            </div>
+
+            <!-- Step 1 -->
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#6a1b9a; background:#f3e5f5; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">Step 1　校正陰離子間隙</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    AG = Na⁺ − Cl⁻ − HCO₃⁻　（正常值 &lt; 12 mEq/L）<br>
+                    校正 AG = AG + 2.5 × (4 − Albumin g/dL)<br>
+                    <b>白蛋白校正很重要：</b>低白蛋白血症會讓 AG 被低估，掩蓋真正的高 AG 酸中毒
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1565c0; background:#e3f2fd; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">Step 2　Winter's 呼吸代償</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    預期 PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2<br>
+                    <b>實測 PaCO₂ 在範圍內</b> → 單純代謝性酸中毒，代償適當<br>
+                    <b>實測 PaCO₂ &gt; 上限</b> → 合併呼吸性酸中毒（呼吸代償不足）<br>
+                    <b>實測 PaCO₂ &lt; 下限</b> → 合併呼吸性鹼中毒（過度呼吸代償）
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#e65100; background:#fff3e0; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">Step 3　Delta Gap（高 AG 適用）</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    ΔAG = 校正 AG − 12　　ΔHCO₃⁻ = 24 − HCO₃⁻<br>
+                    比值 = ΔAG ÷ ΔHCO₃⁻<br>
+                    <b>&lt; 0.4</b> → 合併正常 AG 代謝性酸中毒<br>
+                    <b>0.4–2</b> → 單純高 AG 代謝性酸中毒<br>
+                    <b>&gt; 2</b> → 合併代謝性鹼中毒（HCO₃⁻ 下降幅度小於預期）
+                </div>
+            </div>
+
+            <!-- 常見病因 -->
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:8px;">常見病因與處置</div>
+
+                <div style="font-size:12px; font-weight:bold; color:#c62828; margin-bottom:4px;">🔴 高 AG（MUDPILES）</div>
+                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:12px;">
+                    <tr style="background:#ffebee;">
+                        <td style="padding:5px 8px; font-weight:bold; color:#c62828; width:28%;">病因</td>
+                        <td style="padding:5px 8px; font-weight:bold; color:#c62828; width:22%;">中文</td>
+                        <td style="padding:5px 8px; font-weight:bold; color:#c62828;">處置重點</td>
+                    </tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>M</b> Methanol</td><td style="padding:5px 8px; color:#666;">甲醇中毒</td><td style="padding:5px 8px; color:#444;">Fomepizole（首選）/ Ethanol、透析（重度）</td></tr>
+                    <tr><td style="padding:5px 8px;"><b>U</b> Uremia</td><td style="padding:5px 8px; color:#666;">尿毒症</td><td style="padding:5px 8px; color:#444;">血液透析</td></tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>D</b> DKA</td><td style="padding:5px 8px; color:#666;">糖尿病酮酸中毒</td><td style="padding:5px 8px; color:#444;">Insulin + 補液 + 補鉀（勿給 NaHCO₃）</td></tr>
+                    <tr><td style="padding:5px 8px;"><b>P</b> Propylene glycol</td><td style="padding:5px 8px; color:#666;">丙二醇中毒</td><td style="padding:5px 8px; color:#444;">停含 PG 藥物（Lorazepam、Diprivan）、透析</td></tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>I</b> Isoniazid</td><td style="padding:5px 8px; color:#666;">異菸鹼醯胺中毒</td><td style="padding:5px 8px; color:#444;">Pyridoxine（Vit B6）大劑量</td></tr>
+                    <tr><td style="padding:5px 8px;"><b>I</b> Iron</td><td style="padding:5px 8px; color:#666;">鐵中毒</td><td style="padding:5px 8px; color:#444;">Deferoxamine</td></tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>L</b> Lactic acidosis</td><td style="padding:5px 8px; color:#666;">乳酸酸中毒</td><td style="padding:5px 8px; color:#444;">治療根本原因（休克復甦）、考慮 NaHCO₃（pH &lt; 7.20）</td></tr>
+                    <tr><td style="padding:5px 8px;"><b>E</b> Ethylene glycol</td><td style="padding:5px 8px; color:#666;">乙二醇中毒</td><td style="padding:5px 8px; color:#444;">Fomepizole、血液透析</td></tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>S</b> Salicylates</td><td style="padding:5px 8px; color:#666;">水楊酸中毒</td><td style="padding:5px 8px; color:#444;">鹼化尿液（NaHCO₃）、透析（重度）</td></tr>
+                </table>
+
+                <div style="font-size:12px; font-weight:bold; color:#1565c0; margin-bottom:4px;">🔵 正常 AG（HARDASS）</div>
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                    <tr style="background:#e3f2fd;">
+                        <td style="padding:5px 8px; font-weight:bold; color:#1565c0; width:28%;">病因</td>
+                        <td style="padding:5px 8px; font-weight:bold; color:#1565c0; width:22%;">中文</td>
+                        <td style="padding:5px 8px; font-weight:bold; color:#1565c0;">處置重點</td>
+                    </tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>H</b> Hyperalimentation</td><td style="padding:5px 8px; color:#666;">過度靜脈營養</td><td style="padding:5px 8px; color:#444;">調整 TPN 配方、減少 Cl⁻ 含量</td></tr>
+                    <tr><td style="padding:5px 8px;"><b>A</b> Addison's disease</td><td style="padding:5px 8px; color:#666;">腎上腺功能不全</td><td style="padding:5px 8px; color:#444;">Hydrocortisone 補充</td></tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>R</b> RTA</td><td style="padding:5px 8px; color:#666;">腎小管酸中毒</td><td style="padding:5px 8px; color:#444;">口服 NaHCO₃ 或檸檬酸鉀</td></tr>
+                    <tr><td style="padding:5px 8px;"><b>D</b> Diarrhea</td><td style="padding:5px 8px; color:#666;">腹瀉</td><td style="padding:5px 8px; color:#444;">補液、補鉀、治療原因</td></tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>A</b> Acetazolamide</td><td style="padding:5px 8px; color:#666;">碳酸酐酶抑制劑</td><td style="padding:5px 8px; color:#444;">停藥或減量</td></tr>
+                    <tr><td style="padding:5px 8px;"><b>S</b> Saline infusion</td><td style="padding:5px 8px; color:#666;">大量生理食鹽水</td><td style="padding:5px 8px; color:#444;">改用平衡液（Lactated Ringer's）</td></tr>
+                    <tr style="background:#fafafa;"><td style="padding:5px 8px;"><b>S</b> Spironolactone</td><td style="padding:5px 8px; color:#666;">保鉀利尿劑</td><td style="padding:5px 8px; color:#444;">停藥或減量、補充 NaHCO₃</td></tr>
+                </table>
+            </div>
+
+            <!-- 臨床重點 -->
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#1a73e8; background:#e8f0fe; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">臨床重點（嚴重代謝性酸血症 pH &lt; 7.20）</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    <b>心血管影響：</b>pH &lt; 7.10–7.20 後心肌收縮力下降、兒茶酚胺反應變鈍、心室性心律不整風險上升<br><br>
+                    <b>Sodium Bicarbonate 使用原則：</b><br>
+                    • 目標 pH 7.30，而非正常化<br>
+                    • 4.2% 溶液 250 mL 在 60 分鐘輸注，必要時再一劑<br>
+                    • 24 小時不超過 1000 mL<br>
+                    • 給藥前先確認：<b>血鉀</b>（低血鉀先補）、<b>離子鈣</b>（低血鈣先補鈣）<br><br>
+                    <b>三個不給的情境：</b><br>
+                    ❌ 糖尿病酮酸中毒（DKA）<br>
+                    ❌ 腫瘤溶解症候群合併 AKI<br>
+                    ❌ 離子鈣偏低
+                </div>
+            </div>
+
+            <div style="font-size:11px; color:#aaa; text-align:right; margin-bottom:10px;">參考：Jung B et al. CHEST Crit Care. 2026;4(3):100271</div>
+            <button onclick="closeMenu('acidosisModal')" class="close-btn">關閉</button>
+        </div>
+    </div>
+
+    <!-- Winter's Formula Modal -->
+    <div id="wintersModal" class="overlay" onclick="closeMenu('wintersModal')">
+        <div class="menu" onclick="event.stopPropagation()" style="width:95%; max-width:560px; padding:18px; max-height:92vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <h3 style="margin:0;">🧮 Winter's Formula</h3>
+                <button onclick="closeMenu('wintersModal')" style="background:#eee; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">✕</button>
+            </div>
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#00695c; background:#e0f2f1; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">公式</div>
+                <div style="font-size:15px; font-weight:bold; color:#333; text-align:center; background:#f5f5f5; padding:10px; border-radius:8px; margin-top:6px;">
+                    PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2
+                </div>
+            </div>
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#00695c; background:#e0f2f1; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">用途</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    用於<b>代謝性酸中毒</b>時，評估呼吸代償是否適當<br>
+                    若實測 PaCO₂ 在預期範圍內 → <b>單純代謝性酸中毒</b>（代償適當）<br>
+                    若實測 PaCO₂ > 預期上限 → <b>合併呼吸性酸中毒</b><br>
+                    若實測 PaCO₂ < 預期下限 → <b>合併呼吸性鹼中毒</b>
+                </div>
+            </div>
+            <div style="margin-bottom:14px;">
+                <div style="font-size:13px; font-weight:bold; color:#00695c; background:#e0f2f1; padding:4px 8px; border-radius:6px; display:inline-block; margin-bottom:6px;">臨床提醒</div>
+                <div style="font-size:13px; color:#444; line-height:1.8;">
+                    僅適用於<b>代謝性酸中毒</b>（HCO₃⁻ 降低）<br>
+                    需先確認 pH 及 HCO₃⁻ 的方向再套用<br>
+                    代謝性鹼中毒的呼吸代償請使用其他公式
+                </div>
+            </div>
+            <button onclick="closeMenu('wintersModal')" class="close-btn">關閉</button>
         </div>
     </div>
 
