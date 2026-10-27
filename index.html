@@ -533,10 +533,51 @@
                 </div>
             </div>
 
+            <!-- 氧氣鋼瓶剩餘時間 -->
+            <div class="card calc-container" style="border-top: 4px solid #e65100;">
+                <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%;">
+                    <div class="title">🛢️ 氧氣鋼瓶剩餘時間</div>
+                    <span class="type">剩餘時間(min) = 瓶內壓力(PSI) × 鋼瓶係數 ÷ 流量(L/min)</span>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-item">
+                        <label>壓力 (PSI)</label>
+                        <input type="number" id="o2t_psi" placeholder="1800" class="input-small" inputmode="decimal">
+                    </div>
+                    <div class="input-item">
+                        <label>流量 (L/min)</label>
+                        <input type="number" id="o2t_flow" placeholder="2" class="input-small" inputmode="decimal">
+                    </div>
+                </div>
+
+                <div style="margin-top:12px;">
+                    <label style="font-size:13px; color:#666; font-weight:bold; display:block; margin-bottom:6px;">鋼瓶型號</label>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <label style="flex:1; min-width:70px; text-align:center; cursor:pointer;">
+                            <input type="radio" name="o2t_type" value="0.28" checked> E瓶<br><span style="font-size:11px; color:#888;">係數 0.28</span>
+                        </label>
+                        <label style="flex:1; min-width:70px; text-align:center; cursor:pointer;">
+                            <input type="radio" name="o2t_type" value="0.16"> D瓶<br><span style="font-size:11px; color:#888;">係數 0.16</span>
+                        </label>
+                        <label style="flex:1; min-width:70px; text-align:center; cursor:pointer;">
+                            <input type="radio" name="o2t_type" value="3.14"> H/K瓶<br><span style="font-size:11px; color:#888;">係數 3.14</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="calculateO2Tank()" class="btn" style="background:#e65100; margin-top:12px;">計算剩餘時間</button>
+
+                <div id="o2tResult" class="result-panel" style="border-left-color:#e65100; display:none;">
+                    <div class="result-line"><span>剩餘時間</span><b><span id="res-o2t-min">--</span> 分鐘</b></div>
+                    <div id="res-o2t-warn" style="text-align:center; font-weight:bold; margin-top:8px;"></div>
+                </div>
+            </div>
+
         </div>
         </div>
     </div>
-    
+
 
     <!-- 臨床雜事 -->
     <div class="card">
@@ -609,6 +650,7 @@
                   <a href="https://drive.google.com/file/d/1CAdemvvMeubScnavA6XGRrarGD9-lLu8/view?usp=drivesdk" target="_blank" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7; text-decoration:none;">⚠️</a>
                 </div>
                 <a href="https://drive.google.com/file/d/1cFrYrbYfG6yj5UTCXFoUUZ25GmoA3RMd/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">PAV</a>
+                <a href="https://www.draeger.com/en_me/Hospital/Mechanical-Ventilation/Wean/Variable-Pressure-Support" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7;">Variable PSV</a>
                 <div style="position:relative;">
                   <a href="https://drive.google.com/file/d/1FkIn0ORei7SYVCvYr8iTM2y3Hbsa6QoO/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#8e24aa; border-color:#e1bee7; display:block;">NO</a>
                   <span onclick="event.stopPropagation(); closeMenu('techOverlay'); setTimeout(()=>openMenu('inoWarningModal'),200);" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7;" title="iNO 臨床警語">⚠️</span>
@@ -1127,6 +1169,33 @@
             document.getElementById('res-mp').innerText = mp;
             document.getElementById('res-mp-interp').innerText = interp;
             document.getElementById('mpResult').style.display = 'block';
+        }
+
+        function calculateO2Tank() {
+            const psi  = parseFloat(document.getElementById('o2t_psi').value);
+            const flow = parseFloat(document.getElementById('o2t_flow').value);
+            const typeEl = document.querySelector('input[name="o2t_type"]:checked');
+            if (!typeEl || isNaN(psi) || isNaN(flow) || flow <= 0) {
+                alert('請填入壓力與流量'); return;
+            }
+            const coeff = parseFloat(typeEl.value);
+            const mins  = Math.floor(psi * coeff / flow);
+            const hrs   = Math.floor(mins / 60);
+            const rem   = mins % 60;
+            document.getElementById('res-o2t-min').innerText = mins;
+            let warn = '', warnColor = '#1b5e20';
+            if (mins < 15) {
+                warn = '🚨 快沒氧了！立即更換鋼瓶';
+                warnColor = '#b71c1c';
+            } else if (mins < 30) {
+                warn = '⚠️ 剩餘時間不足 30 分鐘，請備妥備用鋼瓶';
+                warnColor = '#e65100';
+            } else {
+                warn = '✅ 剩餘量充足';
+            }
+            const warnEl = document.getElementById('res-o2t-warn');
+            warnEl.innerText = warn; warnEl.style.color = warnColor;
+            document.getElementById('o2tResult').style.display = 'block';
         }
 
         function calculateAA() {
@@ -1810,6 +1879,16 @@
                 <div style="position:relative;">
                   <a href="https://drive.google.com/file/d/1-1aCzUFa0md0t_43Aj0EGzBjbZtsmwjB/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4; display:block;">HFNC 鼻導管選擇</a>
                   <span onclick="event.stopPropagation(); closeMenu('pedsOverlay'); setTimeout(()=>openMenu('hfncCannulaNoteModal'),200);" style="cursor:pointer; font-size:18px; position:absolute; right:10px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1.5px solid #ffe082; background:#fffde7;" title="備註">⚠️</span>
+                </div>
+                <!-- 兒科初始設定 expandable -->
+                <div style="position:relative;">
+                  <a onclick="event.preventDefault(); var el=document.getElementById('pedsInitExpand'); el.style.display=el.style.display==='none'?'block':'none';" href="#" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4; display:block;">兒科初始設定 ▾</a>
+                </div>
+                <div id="pedsInitExpand" style="display:none; padding-left:12px;">
+                  <a href="https://drive.google.com/file/d/1iglrJUPb901kuSdbmDHJ3G5HbKzinBA8/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4; display:block; margin-top:6px;">NICU 呼吸器初始設定</a>
+                  <a href="https://drive.google.com/file/d/1k05Ea-9iRmuauaQExmncDsizcOWRE3IR/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4; display:block; margin-top:6px;">PICU 呼吸器初始設定</a>
+                  <a href="https://drive.google.com/file/d/1LOhTgVtqX24EBZOVLp1fWCgJemB5WKmJ/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4; display:block; margin-top:6px;">NAVA 初始設定</a>
+                  <a href="https://drive.google.com/file/d/1N0h3nXCyIpVcV99uN_WejiLGMQhRI1IG/view?usp=drive_link" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4; display:block; margin-top:6px;">HFOV 初始設定</a>
                 </div>
                 <a href="https://drive.google.com/file/d/12gIpyvOlJj4gKPmdJJbpqmf0aBMNnj0H/view?usp=drivesdk" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4;">新生兒常見呼吸器操作與故障排除 1</a>
                 <a href="https://drive.google.com/file/d/1c7Ehw6sIAqTBz4ci3X-rm0-R4SgdcMl5/view?usp=drivesdk" target="_blank" class="menu-btn" style="color:#5D4037; border-color:#BCAAA4;">新生兒常見呼吸器操作與故障排除 2</a>
